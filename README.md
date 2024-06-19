@@ -7,6 +7,7 @@ This is a collection of useful scripts to help you manage your Actual Budget.
 - [Installation](#installation)
 - Scripts:
   - [Loan Interest Calculator](#loan-interest-calculator)
+  - [Tracking Home Prices (Zillow's Zestimate)](#tracking-home-prices-zillows-zestimate)
 
 ## Requirements
 
@@ -41,6 +42,10 @@ Run `npm install` to install any required dependencies.
 
 ## Scripts
 
+Note that most of the scripts utilize account notes to set configuration on
+each account.  The scripts will find all accounts that are configured and
+update them all in a single call.
+
 ### Loan Interest Calculator
 
 This script calculates the interest for a loan account and adds the interest
@@ -64,6 +69,36 @@ To run:
 
 ```console
 $ node apply-interest.js
+```
+
+It is recommended to run this script once per month.
+
+### Tracking Home Prices (Zillow's Zestimate)
+
+This script tracks the Zillow Zestimate for a home.  It adds new transactions
+to keep the account balance equal to the latest Zestimate.
+
+To use this script, you need to create a new account in Actual Budget and set
+the account note to `zestimate:<Zillow URL>`.  You can find the Zillow URL by
+searching for the home on Zillow and copying the URL from the address bar.
+
+For example, if you want to track the Zestimate for a home with the URL
+`https://www.zillow.com/homes/123-Example-St-Anytown-CA-12345/12345678_zpid/`,
+set the account note to
+`zestimate:https://www.zillow.com/homes/123-Example-St-Anytown-CA-12345/12345678_zpid/`.
+
+Optionally, you can also specify if you only own a portion of the home by
+adding an `ownership:0.0X` tag to the account note.  For example, if you own
+10% of the home, add `ownership:0.10` to the account note.  The script will
+then use that percentage to track the home's value.
+
+You can optionally change the payee used for the transactions by setting
+`IMPORTER_ZESTIMATE_PAYEE_NAME` in the `.env` file.
+
+To run:
+
+```console
+$ node zestimate.js
 ```
 
 It is recommended to run this script once per month.
