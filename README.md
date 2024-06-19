@@ -9,6 +9,7 @@ This is a collection of useful scripts to help you manage your Actual Budget.
     - [Sync Remote Banks](#sync-remote-banks)
     - [Loan Interest Calculator](#loan-interest-calculator)
     - [Tracking Home Prices (Zillow's Zestimate)](#tracking-home-prices-zillows-zestimate)
+    - [Tracking Car Prices (Kelley Blue Book)](#tracking-car-prices-kelley-blue-book)
 
 ## Requirements
 
@@ -118,3 +119,41 @@ $ node zestimate.js
 ```
 
 It is recommended to run this script once per month.
+
+### Tracking Car Prices (Kelley Blue Book)
+
+This script tracks the Kelley Blue Book value for a car.  It adds new
+transactions to keep the account balance equal to the latest KBB value.
+
+To use this script, first you need to use the KBB website to find the value
+of your car.  Be sure to select "Private Party" for the value.  It should show
+something like this:
+
+![KBB price of a car](images/kbb-price.png)
+
+Then right click on the price and select "Inspect" to view the page HTML.
+From there, grab the URL for the image:
+
+![HTML](images/kbb-html.png)
+
+Then for your Actual account, set the following tags in the account note based
+on the values in the URL.
+
+- `kbbURL:https://upa.syndication.kbb.com/usedcar/privateparty/sell/?apikey=XX-XX-XX-XX-XX`
+- `kbbZipcode:XXXXX`
+- `kbbCondition:good` (or whatever condition you want to use)
+- `kbbMileage:XXXXX` (miles on the car, no commas)
+- `kbbVehicleid:XXXXXX`
+- `kbbOptions:XXX,XXX,XXX,...`
+
+You can optionally change the payee used for the transactions by setting
+`IMPORTER_KBB_PAYEE_NAME` in the `.env` file.
+
+To run:
+
+```console
+$ node kbb.js
+```
+
+It is recommended to run this script once per month.  Note that you will have
+to periodically update the mileage in the account note.
