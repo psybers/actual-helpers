@@ -6,8 +6,9 @@ This is a collection of useful scripts to help you manage your Actual Budget.
 - [Configuration](#configuration)
 - [Installation](#installation)
 - Scripts:
-  - [Loan Interest Calculator](#loan-interest-calculator)
-  - [Tracking Home Prices (Zillow's Zestimate)](#tracking-home-prices-zillows-zestimate)
+    - [Sync Remote Banks](#sync-remote-banks)
+    - [Loan Interest Calculator](#loan-interest-calculator)
+    - [Tracking Home Prices (Zillow's Zestimate)](#tracking-home-prices-zillows-zestimate)
 
 ## Requirements
 
@@ -45,6 +46,21 @@ Run `npm install` to install any required dependencies.
 Note that most of the scripts utilize account notes to set configuration on
 each account.  The scripts will find all accounts that are configured and
 update them all in a single call.
+
+### Sync Remote Banks
+
+This script will sync all remote banks that are configured in Actual Budget.
+This can be used in place of clicking the "Sync" button in the Actual Budget
+app and will ensure your accounts are always up-to-date with
+GoCardless/SimpleFIN.
+
+To run:
+
+```console
+$ node sync-banks.js
+```
+
+It is recommended to run this script once per day or week.
 
 ### Loan Interest Calculator
 
