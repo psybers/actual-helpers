@@ -10,6 +10,7 @@ This is a collection of useful scripts to help you manage your Actual Budget.
     - [Loan Interest Calculator](#loan-interest-calculator)
     - [Tracking Home Prices (Zillow's Zestimate)](#tracking-home-prices-zillows-zestimate)
     - [Tracking Car Prices (Kelley Blue Book)](#tracking-car-prices-kelley-blue-book)
+    - [Tracking Investment Accounts](#tracking-investment-accounts)
 
 ## Requirements
 
@@ -157,3 +158,50 @@ $ node kbb.js
 
 It is recommended to run this script once per month.  Note that you will have
 to periodically update the mileage in the account note.
+
+### Tracking Investment Accounts
+
+**NOTE: This script only works with SimpleFIN accounts.**
+
+This script tracks the value of an investment account.  It adds new
+transactions to keep the account balance equal to the latest value.  This
+requires connecting to SimpleFIN to grab the reported account balance, so
+that the script can update the transactions to reflect that balance.
+
+Note that I have some rules set up on the accounts that the script assumes.
+First, all payees are set to the same name "Investment".  Second, any money I
+add to the account to fund it I set the category to something different.  In
+my case, since I am funding these with my paycheck I categorize them as
+"Paycheck" but the key is to set a category different from the ones the script
+will utilize.  Then all other transactions are categorized as "Investment".
+
+There are three tags you can set in the account notes:
+
+- `calcInvestment` - this is the tag that tells the script to track the
+  balance.  You will want this on each account, and then optionally one of the
+  following.
+- `zeroSmall` - this is a helper tag that will zero out any small transactions
+  (less than $10). This is useful for accounts that have a lot of small
+  transactions that you don't want to track.  For example, one of my accounts
+  shows dividends as separate transactions, so I use this tag to ignore
+  those as my account balance does not actually change when those occur (they
+  are reinvested).
+- `dropPayments` - this is a helper tag that will zero out anything in the
+  payment column.  One of my accounts lists stock purchases as separate
+  transactions, so I ignore those as my account balance does not actually
+  change when those occur.  But these are typically larger payments and I want
+  to keep small payments (interest accrued) so I use this tag on that account
+  instead of `zeroSmall`.
+
+Note that the code has a function named `shouldDrop` that might need to be
+modified.  This function lists transactions whose note contains certain
+strings that are targeted when using `zeroSmall` and `dropPayments`.  You may
+need to update this to add additional notes to look for.
+
+To run:
+
+```console
+$ node track-investments.js
+```
+
+It is recommended to run this script once per month.

@@ -43,6 +43,17 @@ module.exports = {
     return data.data;
   },
 
+  getTransactions: async function (account) {
+    const data = await api.runQuery(
+      api.q('transactions')
+        .select('*')
+        .filter({
+          'account': account.id,
+        })
+    );
+    return data.data;
+  },
+
   getLastTransactionDate: async function (account, cutoffDate=new Date()) {
     const data = await api.runQuery(
       api.q('transactions')

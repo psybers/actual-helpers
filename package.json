@@ -2,6 +2,7 @@
   "dependencies": {
     "@actual-app/api": "^6.8.1",
     "dotenv": "^16.4.5",
-    "jsdom": "^24.1.0"
+    "jsdom": "^24.1.0",
+    "readline-sync": "^1.4.10"
   }
 }

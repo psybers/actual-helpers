@@ -1,5 +1,6 @@
 # Actual Budget cache
 cache/
+simplefin.credentials
 
 # Logs
 logs
