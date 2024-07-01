@@ -137,4 +137,9 @@ module.exports = {
       setTimeout(resolve, ms);
     });
   },  
+
+  showPercent: function (pct) {
+    return Number(pct).toLocaleString(undefined,
+        { style: 'percent', maximumFractionDigits: 2 })
+  },
 };

@@ -1,5 +1,5 @@
 const api = require('@actual-app/api');
-const { closeBudget, ensurePayee, getAccountBalance, getAccountNote, getLastTransactionDate, openBudget } = require('./utils');
+const { closeBudget, ensurePayee, getAccountBalance, getAccountNote, getLastTransactionDate, openBudget, showPercent } = require('./utils');
 require("dotenv").config();
 
 (async () => {
@@ -17,7 +17,7 @@ require("dotenv").config();
 
     if (note) {
       if (note.indexOf('interestRate:') > -1 && note.indexOf('interestDay:') > -1) {
-        const interestRate = parseFloat(note.split('interestRate:')[1].split(' ')[0]);
+        let interestRate = parseFloat(note.split('interestRate:')[1].split(' ')[0]);
         const interestDay = parseInt(note.split('interestDay:')[1].split(' ')[0]);
 
         const interestTransactionDate = new Date();
@@ -38,11 +38,13 @@ require("dotenv").config();
         const balance = await getAccountBalance(account, interestTransactionDate);
         const compoundedInterest = Math.round(balance * (Math.pow(1 + interestRate / 12, 1) - 1));
 
+        interestRate = showPercent(interestRate);
+
         console.log(`== ${account.name} ==`);
         console.log(` -> Balance:  ${balance}`);
         console.log(`      as of ${lastDate}`);
         console.log(` -> # days:   ${daysPassed}`);
-        console.log(` -> Interest: ${compoundedInterest}`)
+        console.log(` -> Interest: ${compoundedInterest} (${interestRate})`)
 
         if (compoundedInterest) {
           await api.importTransactions(account.id, [{
@@ -50,7 +52,7 @@ require("dotenv").config();
             payee: payeeId,
             amount: compoundedInterest,
             cleared: true,
-            notes: `Interest for 1 month at ${100*interestRate}%`,
+            notes: `Interest for 1 month at ${interestRate}`,
           }]);
         }
       }

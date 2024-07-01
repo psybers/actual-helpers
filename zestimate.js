@@ -1,6 +1,6 @@
 const api = require('@actual-app/api');
 const jsdom = require("jsdom");
-const { closeBudget, ensurePayee, getAccountBalance, getAccountNote, openBudget, sleep } = require('./utils');
+const { closeBudget, ensurePayee, getAccountBalance, getAccountNote, openBudget, showPercent, sleep } = require('./utils');
 require("dotenv").config();
 
 async function getZestimate(URL) {
@@ -56,7 +56,7 @@ async function getZestimate(URL) {
           amount: diff,
           cleared: true,
           reconciled: true,
-          notes: `Update Zestimate to ${zestimate * ownership / 100} (${zestimate / 100}*${ownership * 100}%)`,
+          notes: `Update Zestimate to ${zestimate * ownership / 100} (${zestimate / 100}*${showPercent(ownership)})`,
         }]);
       }
 
