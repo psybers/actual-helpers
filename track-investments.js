@@ -112,10 +112,12 @@ const zeroTransaction = async (payment) => {
           console.log('Current Balance:', currentBalance);
           console.log('Difference:', diff);
 
-            await api.importTransactions(account.id, [{
+          await api.importTransactions(account.id, [{
             date: new Date(),
             payee: payeeId,
             amount: diff,
+            cleared: true,
+            reconciled: true,
             category: categoryId,
             notes: `Update investment balance to ${simplefinBalance / 100}`,
           }]);

@@ -64,6 +64,8 @@ async function getKBB(URL) {
             date: new Date(),
             payee: payeeId,
             amount: diff,
+            cleared: true,
+            reconciled: true,
             notes: `Update KBB to ${kbb / 100}`,
           }]);
         }

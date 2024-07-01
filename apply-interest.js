@@ -49,6 +49,7 @@ require("dotenv").config();
             date: interestTransactionDate,
             payee: payeeId,
             amount: compoundedInterest,
+            cleared: true,
             notes: `Interest for 1 month at ${100*interestRate}%`,
           }]);
         }

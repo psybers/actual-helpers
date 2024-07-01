@@ -54,6 +54,8 @@ async function getZestimate(URL) {
           date: new Date(),
           payee: payeeId,
           amount: diff,
+          cleared: true,
+          reconciled: true,
           notes: `Update Zestimate to ${zestimate * ownership / 100} (${zestimate / 100}*${ownership * 100}%)`,
         }]);
       }
