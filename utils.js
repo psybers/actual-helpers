@@ -83,6 +83,7 @@ module.exports = {
       console.error('Failed to create payee:', payeeName);
       process.exit(1);
     }
+    return payeeId;
   },
 
   ensureCategory: async function (categoryName) {
@@ -95,6 +96,7 @@ module.exports = {
       console.error('Failed to create category:', categoryName);
       process.exit(1);
     }
+    return categoryId;
   },
 
   getTagValue: function (note, tag, defaultValue=undefined) {
