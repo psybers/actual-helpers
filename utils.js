@@ -3,6 +3,11 @@ require("dotenv").config();
 
 module.exports = {
   openBudget: async function () {
+    process.on('unhandledRejection', (reason, p) => {
+      console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
+      console.log(reason.stack);
+    });
+
     const url = process.env.ACTUAL_SERVER_URL || '';
     const password = process.env.ACTUAL_SERVER_PASSWORD || '';
     const file_password = process.env.ACTUAL_FILE_PASSWORD || '';
