@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@actual-app/api": "^6.8.1",
+    "@actual-app/api": "latest",
     "dotenv": "^16.4.5",
     "jsdom": "^24.1.0",
     "readline-sync": "^1.4.10"
