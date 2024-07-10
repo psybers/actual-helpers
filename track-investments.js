@@ -106,7 +106,7 @@ const zeroTransaction = async (payment) => {
         const simplefinBalance = parseInt(simplefinBalances[account.name] * 100);
         const diff = simplefinBalance - currentBalance;
 
-        if (diff != 0) {
+        if (diff) {
           console.log('Account:', account.name);
           console.log('Simplefin Balance:', simplefinBalance);
           console.log('Current Balance:', currentBalance);
