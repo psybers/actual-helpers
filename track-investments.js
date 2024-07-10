@@ -106,12 +106,12 @@ const zeroTransaction = async (payment) => {
         const simplefinBalance = parseInt(simplefinBalances[account.name] * 100);
         const diff = simplefinBalance - currentBalance;
 
-        if (diff) {
-          console.log('Account:', account.name);
-          console.log('Simplefin Balance:', simplefinBalance);
-          console.log('Current Balance:', currentBalance);
-          console.log('Difference:', diff);
+        console.log('Account:', account.name);
+        console.log('Simplefin Balance:', simplefinBalance);
+        console.log('Current Balance:', currentBalance);
+        console.log('Difference:', diff);
 
+        if (diff) {
           await api.importTransactions(account.id, [{
             date: new Date(),
             payee: payeeId,
