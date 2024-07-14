@@ -1,6 +1,10 @@
 # Actual Budget cache
-cache/
 simplefin.credentials
+/cache/*/
+
+# temp files
+.*.swp
+.DS_Store
 
 # Logs
 logs
