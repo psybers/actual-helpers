@@ -4,20 +4,31 @@ const { closeBudget, ensurePayee, getAccountBalance, getAccountNote, openBudget,
 require("dotenv").config();
 
 async function getZestimate(URL) {
-  const response = await fetch(URL, {
-    headers: {
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
-      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
-      'Accept-Language': 'en-GB,en;q=0.6',
-      'Referer': 'https://www.google.com/',
-    }
-  });
+  try {
+    const response = await fetch(URL, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+        'Accept-Language': 'en-GB,en;q=0.6',
+        'Referer': 'https://www.google.com/',
+      }
+    });
+  } catch (error) {
+    console.log('Error fetching Zillow URL:');
+    console.log(error);
+  }
 
   const html = await response.text();
-  const dom = new jsdom.JSDOM(html);
+  try {
+    const dom = new jsdom.JSDOM(html);
 
-  const zestimateText = dom.window.document.getElementById('home-details-home-values').getElementsByTagName('h3')[0].textContent;
-  return parseInt(zestimateText.replace('$', '').replace(',', '')) * 100;
+    const zestimateText = dom.window.document.getElementById('home-details-home-values').getElementsByTagName('h3')[0].textContent;
+    return parseInt(zestimateText.replace('$', '').replace(',', '')) * 100;
+  } catch (error) {
+    console.log('Error parsing Zillow page:');
+    console.log(error);
+    console.log(html);
+  }
 }
 
 (async function() {
