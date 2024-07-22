@@ -16,6 +16,7 @@ async function getZestimate(URL) {
   } catch (error) {
     console.log('Error fetching Zillow URL:');
     console.log(error);
+    return undefined;
   }
 
   const html = await response.text();
@@ -29,6 +30,7 @@ async function getZestimate(URL) {
     console.log(error);
     console.log(html);
   }
+  return undefined;
 }
 
 (async function() {
@@ -52,6 +54,10 @@ async function getZestimate(URL) {
       console.log('Zillow URL:', URL);
 
       const zestimate = await getZestimate(URL);
+      if (!zestimate) {
+          console.log('Was unable to get Zestimate, skipping');
+          continue;
+      }
       const balance = await getAccountBalance(account);
       const diff = (zestimate * ownership) - balance;
 
