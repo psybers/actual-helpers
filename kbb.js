@@ -40,7 +40,7 @@ async function getKBB(URL) {
         const condition = getTagValue(note, 'kbbCondition', 'good');
         if (condition) URL += `&condition=${condition}`;
 
-        const mileage = getTagValue(note, 'kbbMileage', 30000);
+        let mileage = getTagValue(note, 'kbbMileage', 30000);
         if (mileage) URL += `&mileage=${mileage}`;
 
         const vehicleid = getTagValue(note, 'kbbVehicleid');
@@ -66,7 +66,7 @@ async function getKBB(URL) {
             amount: diff,
             cleared: true,
             reconciled: true,
-            notes: `Update KBB to ${kbb / 100}`,
+            notes: `Update KBB to ${kbb / 100} (${mileage} miles)`,
           }]);
         }
 
