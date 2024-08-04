@@ -38,16 +38,20 @@ const getSimplefinBalances = async () => {
   const username = credentials.split(':')[0];
   const pw = credentials.split(':')[1];
 
-  const url = `https://beta-bridge.simplefin.org/simplefin/accounts?start-date=${new Date().getTime()}&end-date=${new Date().getTime()}`;
-  const response = await fetch(url, {
-    headers: {
-      'Authorization': `Basic ${btoa(`${username}:${pw}`)}`
-    }
-  });
-  const data = await response.json();
-  const accounts = data.accounts;
-  const balances = {};
-  accounts.forEach(a => balances[a.name] = parseFloat(a.balance));
+  try {
+    const url = `https://beta-bridge.simplefin.org/simplefin/accounts?start-date=${new Date().getTime()}&end-date=${new Date().getTime()}`;
+    const response = await fetch(url, {
+      headers: {
+        'Authorization': `Basic ${btoa(`${username}:${pw}`)}`
+      }
+    });
+    const data = await response.json();
+    const accounts = data.accounts;
+    const balances = {};
+    accounts.forEach(a => balances[a.name] = parseFloat(a.balance));
+  } catch (e) {
+    return undefined;
+  }
   return balances;
 };
 
@@ -71,56 +75,57 @@ const zeroTransaction = async (payment) => {
   const categoryId = await ensureCategory(process.env.IMPORTER_INVESTMENT_CATEGORY_NAME || 'Investment');
 
   const simplefinBalances = await getSimplefinBalances();
-
-  const accounts = await api.getAccounts();
-  for (const account of accounts) {
-    if (account.closed) {
-      continue;
-    }
-
-    const note = await getAccountNote(account);
-
-    if (note) {
-      const data = await getTransactions(account);
-
-      if (note.indexOf('zeroSmall') > -1) {
-        const payments = data.filter(payment => payment.amount > -10000 && payment.amount < 10000 && payment.amount != 0 && payment.category == categoryId)
-        for (const payment of payments) {
-          if (shouldDrop(payment)) {
-            await zeroTransaction(payment);
-          }
-        }
+  if (simplefinBalances) {
+    const accounts = await api.getAccounts();
+    for (const account of accounts) {
+      if (account.closed) {
+        continue;
       }
 
-      if (note.indexOf('dropPayments') > -1) {
-        const payments = data.filter(payment => payment.amount < 0)
-        for (const payment of payments) {
-          if (shouldDrop(payment)) {
-            await zeroTransaction(payment);
+      const note = await getAccountNote(account);
+
+      if (note) {
+        const data = await getTransactions(account);
+
+        if (note.indexOf('zeroSmall') > -1) {
+          const payments = data.filter(payment => payment.amount > -10000 && payment.amount < 10000 && payment.amount != 0 && payment.category == categoryId)
+          for (const payment of payments) {
+            if (shouldDrop(payment)) {
+              await zeroTransaction(payment);
+            }
           }
         }
-      }
 
-      if (note.indexOf('calcInvestment') > -1) {
-        const currentBalance = await getAccountBalance(account);
-        const simplefinBalance = parseInt(simplefinBalances[account.name] * 100);
-        const diff = simplefinBalance - currentBalance;
+        if (note.indexOf('dropPayments') > -1) {
+          const payments = data.filter(payment => payment.amount < 0)
+          for (const payment of payments) {
+            if (shouldDrop(payment)) {
+              await zeroTransaction(payment);
+            }
+          }
+        }
 
-        console.log('Account:', account.name);
-        console.log('Simplefin Balance:', simplefinBalance);
-        console.log('Current Balance:', currentBalance);
-        console.log('Difference:', diff);
+        if (note.indexOf('calcInvestment') > -1) {
+          const currentBalance = await getAccountBalance(account);
+          const simplefinBalance = parseInt(simplefinBalances[account.name] * 100);
+          const diff = simplefinBalance - currentBalance;
 
-        if (diff) {
-          await api.importTransactions(account.id, [{
-            date: new Date(),
-            payee: payeeId,
-            amount: diff,
-            cleared: true,
-            reconciled: true,
-            category: categoryId,
-            notes: `Update investment balance to ${simplefinBalance / 100}`,
-          }]);
+          console.log('Account:', account.name);
+          console.log('Simplefin Balance:', simplefinBalance);
+          console.log('Current Balance:', currentBalance);
+          console.log('Difference:', diff);
+
+          if (diff) {
+            await api.importTransactions(account.id, [{
+              date: new Date(),
+              payee: payeeId,
+              amount: diff,
+              cleared: true,
+              reconciled: true,
+              category: categoryId,
+              notes: `Update investment balance to ${simplefinBalance / 100}`,
+            }]);
+          }
         }
       }
     }
