@@ -59,7 +59,11 @@ module.exports = {
     return data.data;
   },
 
-  getLastTransactionDate: async function (account, cutoffDate=new Date()) {
+  getLastTransactionDate: async function (account, cutoffDate=undefined) {
+    if (cutoffDate === undefined) {
+        cutoffDate = new Date();
+        cutoffDate.setDate(cutoffDate.getDate() + 1);
+    }
     const data = await api.runQuery(
       api.q('transactions')
         .filter({
