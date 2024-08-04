@@ -144,6 +144,7 @@ on the values in the URL.
 - `kbbZipcode:XXXXX`
 - `kbbCondition:good` (or whatever condition you want to use)
 - `kbbMileage:XXXXX` (miles on the car, no commas)
+- `kbbDailyMileage:XXXXX` (if given, will auto-update the mileage based on this daily average)
 - `kbbVehicleid:XXXXXX`
 - `kbbOptions:XXX,XXX,XXX,...`
 

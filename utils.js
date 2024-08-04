@@ -141,6 +141,13 @@ module.exports = {
     return undefined;
   },
 
+  setAccountNote: async function (account, note) {
+    api.internal.send('notes-save', {
+        id: `account-${account.id}`,
+        note: note,
+    });
+  },
+
   sleep: function (ms) {
     return new Promise((resolve) => {
       setTimeout(resolve, ms);

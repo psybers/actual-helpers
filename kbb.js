@@ -1,6 +1,6 @@
 const api = require('@actual-app/api');
 const jsdom = require("jsdom");
-const { closeBudget, ensurePayee, getAccountBalance, getAccountNote, getTagValue, openBudget, sleep } = require('./utils');
+const { closeBudget, ensurePayee, getAccountBalance, getAccountNote, getLastTransactionDate, getTagValue, openBudget, setAccountNote, sleep } = require('./utils');
 require("dotenv").config();
 
 async function getKBB(URL) {
@@ -40,7 +40,7 @@ async function getKBB(URL) {
         const condition = getTagValue(note, 'kbbCondition', 'good');
         if (condition) URL += `&condition=${condition}`;
 
-        let mileage = getTagValue(note, 'kbbMileage', 30000);
+        let mileage = parseInt(getTagValue(note, 'kbbMileage', 30000));
         if (mileage) URL += `&mileage=${mileage}`;
 
         const vehicleid = getTagValue(note, 'kbbVehicleid');
@@ -60,6 +60,28 @@ async function getKBB(URL) {
         console.log('Difference:', diff);
 
         if (diff != 0) {
+          const daily = parseInt(getTagValue(note, 'kbbDailyMileage'));
+          if (mileage && daily) {
+            let lastDate = await getLastTransactionDate(account);
+            const parts = lastDate.split('-');
+            lastDate = new Date(parts[0], parts[1] - 1, parts[2]);
+            if (lastDate < new Date()) {
+              let today = new Date();
+              today = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+              const days = Math.round((today - lastDate) / (1000 * 60 * 60 * 24));
+              if (days > 0) {
+                mileage += days * daily;
+
+                const newNote = note.replace(/kbbMileage:\d+/, `kbbMileage:${mileage}`);
+                await setAccountNote(account, newNote);
+
+                console.log('daily mileage:', daily);
+                console.log('days since last update:', days);
+                console.log('Updated mileage to:', mileage);
+              }
+            }
+          }
+
           await api.importTransactions(account.id, [{
             date: new Date(),
             payee: payeeId,
