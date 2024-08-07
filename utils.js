@@ -1,7 +1,7 @@
 const api = require('@actual-app/api');
 require("dotenv").config();
 
-module.exports = {
+const Utils = {
   openBudget: async function () {
     process.on('unhandledRejection', (reason, p) => {
       console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
@@ -130,15 +130,7 @@ module.exports = {
   },
 
   getAccountNote: async function (account) {
-    const notes = await api.runQuery(
-      api.q('notes')
-        .filter({ id: `account-${account.id}` })
-        .select('*')
-      );
-    if (notes.data.length && notes.data[0].note) {
-      return notes.data[0].note;
-    }
-    return undefined;
+    return Utils.getNote(`account-${account.id}`);
   },
 
   setAccountNote: async function (account, note) {
@@ -159,3 +151,5 @@ module.exports = {
         { style: 'percent', maximumFractionDigits: 2 })
   },
 };
+
+module.exports = Utils;
