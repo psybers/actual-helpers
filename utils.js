@@ -4,8 +4,9 @@ require("dotenv").config();
 const Utils = {
   openBudget: async function () {
     process.on('unhandledRejection', (reason, p) => {
-      console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
-      console.log(reason.stack);
+      console.error('Unhandled Rejection at: Promise', p, 'reason:', reason);
+      console.error(reason.stack);
+      process.exit(1);
     });
 
     const url = process.env.ACTUAL_SERVER_URL || '';
@@ -32,7 +33,12 @@ const Utils = {
 
   closeBudget: async function () {
     console.log("done");
-    await api.shutdown();
+    try {
+      await api.shutdown();
+    } catch (e) {
+      console.error(e);
+      process.exit(1);
+    }
   },
 
   getAccountBalance: async function (account, cutoffDate=new Date()) {
@@ -83,29 +89,59 @@ const Utils = {
   },
 
   ensurePayee: async function (payeeName) {
-    const payees = await api.getPayees();
-    let payeeId = payees.find(p => p.name === payeeName)?.id;
-    if (!payeeId) {
-      payeeId = await api.createPayee({ name: payeeName });
+    try {
+      const payees = await api.getPayees();
+      let payeeId = payees.find(p => p.name === payeeName)?.id;
+      if (!payeeId) {
+        payeeId = await api.createPayee({ name: payeeName });
+      }
+      if (payeeId) {
+        return payeeId;
+      }
+    } catch (e) {
+      console.error(e);
     }
-    if (!payeeId) {
-      console.error('Failed to create payee:', payeeName);
-      process.exit(1);
-    }
-    return payeeId;
+    console.error('Failed to create payee:', payeeName);
+    process.exit(1);
   },
 
-  ensureCategory: async function (categoryName) {
-    const categories = await api.getCategories();
-    let categoryId = categories.find(c => c.name === categoryName)?.id;
-    if (!categoryId) {
-      categoryId = await api.createCategory({ name: categoryName });
+  ensureCategoryGroup: async function (categoryGroupName) {
+    try {
+      const groups = await api.getCategoryGroups();
+      let groupId = groups.find(g => g.name === categoryGroupName)?.id;
+      if (!groupId) {
+        groupId = await api.createCategoryGroup({ name: categoryGroupName });
+      }
+      if (groupId) {
+        return groupId;
+      }
+    } catch (e) {
+      console.error(e);
     }
-    if (!categoryId) {
-      console.error('Failed to create category:', categoryName);
-      process.exit(1);
+    console.error('Failed to create category group:', categoryGroupName);
+    process.exit(1);
+  },
+
+  ensureCategory: async function (categoryName, groupId, is_income=false) {
+    try {
+      const categories = await api.getCategories();
+      let categoryId = categories.find(c => c.name === categoryName)?.id;
+      if (!categoryId) {
+        categoryId = await api.createCategory({
+          name: categoryName,
+          group_id: groupId,
+          is_income: is_income,
+          hidden: false,
+        });
+      }
+      if (categoryId) {
+        return categoryId;
+      }
+    } catch (e) {
+      console.error(e);
     }
-    return categoryId;
+    console.error('Failed to create category:', categoryName);
+    process.exit(1);
   },
 
   getTagValue: function (note, tag, defaultValue=undefined) {

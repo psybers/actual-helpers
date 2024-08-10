@@ -1,7 +1,7 @@
 const api = require('@actual-app/api');
 const fs = require('fs');
 const readline = require('readline-sync');
-const { closeBudget, ensureCategory, ensurePayee, getAccountBalance, getAccountNote, getSimpleFinID, getTransactions, openBudget } = require('./utils');
+const { closeBudget, ensureCategory, ensureCategoryGroup, ensurePayee, getAccountBalance, getAccountNote, getSimpleFinID, getTransactions, openBudget } = require('./utils');
 require("dotenv").config();
 
 
@@ -72,7 +72,8 @@ const zeroTransaction = async (payment) => {
   await openBudget();
 
   const payeeId = await ensurePayee(process.env.INVESTMENT_PAYEE_NAME || 'Investment');
-  const categoryId = await ensureCategory(process.env.INVESTMENT_CATEGORY_NAME || 'Investment');
+  const categoryGroupId = await ensureCategoryGroup(process.env.INVESTMENT_CATEGORY_GROUP_NAME || 'Income');
+  const categoryId = await ensureCategory(process.env.INVESTMENT_CATEGORY_NAME || 'Investment', categoryGroupId, true);
 
   const simplefinBalances = await getSimplefinBalances();
   if (simplefinBalances) {

@@ -41,9 +41,9 @@ INTEREST_PAYEE_NAME="Loan Interest"
 # optional, name of the payee for added interest transactions
 INVESTMENT_PAYEE_NAME="Investment"
 # optional, name of the cateogry group for added investment tracking transactions
-INTEREST_CATEGORY_GROUP_NAME="Income"
+INVESTMENT_CATEGORY_GROUP_NAME="Income"
 # optional, name of the category for added investment tracking transactions
-INTEREST_CATEGORY_NAME="Investment"
+INVESTMENT_CATEGORY_NAME="Investment"
 ```
 
 ## Installation
@@ -208,6 +208,9 @@ need to update this to add additional notes to look for.
 
 You can optionally change the payee used for the transactions by setting
 `INVESTMENT_PAYEE_NAME` in the `.env` file.
+
+You can optionally change the category group used for the transactions by setting
+`INVESTMENT_CATEGORY_GROUP_NAME` in the `.env` file.
 
 You can optionally change the category used for the transactions by setting
 `INVESTMENT_CATEGORY_NAME` in the `.env` file.
