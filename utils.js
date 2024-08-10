@@ -140,6 +140,19 @@ const Utils = {
     });
   },
 
+  getSimpleFinID: async function (account) {
+    const data = await api.runQuery(
+      api.q('accounts')
+        .filter({ id: account.id })
+        .filter({ account_sync_source: 'simpleFin' })
+        .select('account_id')
+      );
+    if (data.data.length && data.data[0].account_id) {
+      return data.data[0].account_id;
+    }
+    return undefined;
+  },
+
   sleep: function (ms) {
     return new Promise((resolve) => {
       setTimeout(resolve, ms);

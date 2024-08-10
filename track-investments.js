@@ -1,7 +1,7 @@
 const api = require('@actual-app/api');
 const fs = require('fs');
 const readline = require('readline-sync');
-const { closeBudget, ensureCategory, ensurePayee, getAccountBalance, getAccountNote, getTransactions, openBudget } = require('./utils');
+const { closeBudget, ensureCategory, ensurePayee, getAccountBalance, getAccountNote, getSimpleFinID, getTransactions, openBudget } = require('./utils');
 require("dotenv").config();
 
 
@@ -48,11 +48,12 @@ const getSimplefinBalances = async () => {
     const data = await response.json();
     const accounts = data.accounts;
     const balances = {};
-    accounts.forEach(a => balances[a.name] = parseFloat(a.balance));
+    //accounts.forEach(a => balances[a.name] = parseFloat(a.balance));
+    accounts.forEach(a => balances[a.id] = parseFloat(a.balance));
+    return balances;
   } catch (e) {
     return undefined;
   }
-  return balances;
 };
 
 const shouldDrop = (payment) => {
@@ -106,7 +107,8 @@ const zeroTransaction = async (payment) => {
 
         if (note.indexOf('calcInvestment') > -1) {
           const currentBalance = await getAccountBalance(account);
-          const simplefinBalance = parseInt(simplefinBalances[account.name] * 100);
+          const simpleFinID = await getSimpleFinID(account);
+          const simplefinBalance = parseInt(simplefinBalances[simpleFinID] * 100);
           const diff = simplefinBalance - currentBalance;
 
           console.log('Account:', account.name);
