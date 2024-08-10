@@ -70,9 +70,8 @@ const zeroTransaction = async (payment) => {
 (async () => {
   await openBudget();
 
-  const payeeId = await ensurePayee(process.env.IMPORTER_INVESTMENT_PAYEE_NAME || 'Investment');
-
-  const categoryId = await ensureCategory(process.env.IMPORTER_INVESTMENT_CATEGORY_NAME || 'Investment');
+  const payeeId = await ensurePayee(process.env.INVESTMENT_PAYEE_NAME || 'Investment');
+  const categoryId = await ensureCategory(process.env.INVESTMENT_CATEGORY_NAME || 'Investment');
 
   const simplefinBalances = await getSimplefinBalances();
   if (simplefinBalances) {

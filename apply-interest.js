@@ -5,7 +5,7 @@ require("dotenv").config();
 (async () => {
   await openBudget();
 
-  const payeeId = await ensurePayee(process.env.IMPORTER_INTEREST_PAYEE_NAME || 'Loan Interest');
+  const payeeId = await ensurePayee(process.env.INTEREST_PAYEE_NAME || 'Loan Interest');
 
   const accounts = await api.getAccounts();
   for (const account of accounts) {

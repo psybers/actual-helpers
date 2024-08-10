@@ -25,7 +25,7 @@ async function getKBB(URL) {
 (async function() {
   await openBudget();
 
-  const payeeId = await ensurePayee(process.env.IMPORTER_KBB_PAYEE_NAME || 'KBB');
+  const payeeId = await ensurePayee(process.env.KBB_PAYEE_NAME || 'KBB');
 
   const accounts = await api.getAccounts();
   for (const account of accounts) {

@@ -36,7 +36,14 @@ ACTUAL_FILE_PASSWORD="<file password>"
 ACTUAL_CACHE_DIR="./cache"
 
 # optional, name of the payee for added interest transactions
-IMPORTER_INTEREST_PAYEE_NAME="Loan Interest"
+INTEREST_PAYEE_NAME="Loan Interest"
+
+# optional, name of the payee for added interest transactions
+INVESTMENT_PAYEE_NAME="Investment"
+# optional, name of the cateogry group for added investment tracking transactions
+INTEREST_CATEGORY_GROUP_NAME="Income"
+# optional, name of the category for added investment tracking transactions
+INTEREST_CATEGORY_NAME="Investment"
 ```
 
 ## Installation
@@ -81,7 +88,7 @@ interest transaction on the 28th of the month, set the account note to
 `interestRate:0.045 interestDay:28`.
 
 You can optionally change the payee used for the interest transactions by
-setting `IMPORTER_INTEREST_PAYEE_NAME` in the `.env` file.
+setting `INTEREST_PAYEE_NAME` in the `.env` file.
 
 To run:
 
@@ -111,7 +118,7 @@ adding an `ownership:0.0X` tag to the account note.  For example, if you own
 then use that percentage to track the home's value.
 
 You can optionally change the payee used for the transactions by setting
-`IMPORTER_ZESTIMATE_PAYEE_NAME` in the `.env` file.
+`ZESTIMATE_PAYEE_NAME` in the `.env` file.
 
 To run:
 
@@ -149,7 +156,7 @@ on the values in the URL.
 - `kbbOptions:XXX,XXX,XXX,...`
 
 You can optionally change the payee used for the transactions by setting
-`IMPORTER_KBB_PAYEE_NAME` in the `.env` file.
+`KBB_PAYEE_NAME` in the `.env` file.
 
 To run:
 
@@ -198,6 +205,12 @@ Note that the code has a function named `shouldDrop` that might need to be
 modified.  This function lists transactions whose note contains certain
 strings that are targeted when using `zeroSmall` and `dropPayments`.  You may
 need to update this to add additional notes to look for.
+
+You can optionally change the payee used for the transactions by setting
+`INVESTMENT_PAYEE_NAME` in the `.env` file.
+
+You can optionally change the category used for the transactions by setting
+`INVESTMENT_CATEGORY_NAME` in the `.env` file.
 
 To run:
 

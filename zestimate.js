@@ -37,7 +37,7 @@ async function getZestimate(URL) {
 (async function() {
   await openBudget();
 
-  const payeeId = await ensurePayee(process.env.IMPORTER_ZESTIMATE_PAYEE_NAME || 'Zestimate');
+  const payeeId = await ensurePayee(process.env.ZESTIMATE_PAYEE_NAME || 'Zestimate');
 
   const accounts = await api.getAccounts();
   for (const account of accounts) {

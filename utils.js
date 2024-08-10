@@ -12,7 +12,7 @@ const Utils = {
     const password = process.env.ACTUAL_SERVER_PASSWORD || '';
     const file_password = process.env.ACTUAL_FILE_PASSWORD || '';
     const sync_id = process.env.ACTUAL_SYNC_ID || '';
-    const cache = process.env.IMPORTER_CACHE_DIR || './cache';
+    const cache = process.env.ACTUAL_CACHE_DIR || './cache';
 
     if (!url || !password || !sync_id) {
       console.error('Required settings for Actual not provided.');
