@@ -1,6 +1,9 @@
 # Use an official Node.js runtime as a parent image
 FROM node:22
 
+# Don't run as root
+USER node
+
 # Set the working directory in the container
 WORKDIR /usr/src/app
 
