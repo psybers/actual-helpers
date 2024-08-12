@@ -238,19 +238,4 @@ Test if the docker container works correctly.
 
 `docker exec actual-helper node sync-banks.js`
 
-If it is working correctly the bank sync should execute and run. Now lets automate this to run on a schedule. To do this we will be using systemd timers and a shell script to create a new container and execute the update scripts we want to use.
-Allow the script to be executed. Update the script where it does `docker exec` to include any of the scripts you wish to run.
-
-`chmod +x ./update.sh`
-
-Update the actual-helper.service file to point to the correct location of the update.sh file. Change the user and group info if needed. Also add a healthchecks.io ID to the **.env** if you want to automate alerting as well.
-
-`mv ./actual-helper.timer /etc/systemd/system`
-
-`mv ./actual-helper.service /etc/systemd/system`
-
-`systemctl enable actual-helper.timer`
-
-`systemctl enable actual-helper.service`
-
-Note: The timer is configured to run at midnight daily by default.
+If it is working correctly the bank sync should run.
