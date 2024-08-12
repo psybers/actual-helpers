@@ -44,6 +44,9 @@ INVESTMENT_PAYEE_NAME="Investment"
 INVESTMENT_CATEGORY_GROUP_NAME="Income"
 # optional, name of the category for added investment tracking transactions
 INVESTMENT_CATEGORY_NAME="Investment"
+
+# optional, for logging into SimpleFIN
+SIMPLEFIN_CREDENTIALS="<credentials - not the setup token!>"
 ```
 
 ## Installation
@@ -214,6 +217,9 @@ You can optionally change the category group used for the transactions by settin
 
 You can optionally change the category used for the transactions by setting
 `INVESTMENT_CATEGORY_NAME` in the `.env` file.
+
+You can optionally store the SimpleFIN credentials generated from your setup
+token by setting `SIMPLEFIN_CREDENTIALS` in the `.env` file.
 
 To run:
 

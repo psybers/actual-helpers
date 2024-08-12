@@ -6,6 +6,10 @@ require("dotenv").config();
 
 
 const getCredentials = async () => {
+  if (process.env.SIMPLEFIN_CREDENTIALS) {
+    return process.env.SIMPLEFIN_CREDENTIALS;
+  }
+
   const token = readline.question('Enter your SimpleFIN setup token: ');
   const url = atob(token.trim());
 
@@ -19,6 +23,7 @@ const getCredentials = async () => {
 
   const data = `${username}:${pw}`;
   fs.writeFileSync('simplefin.credentials', data);
+  console.log('SimpleFIN credentials:', data);
   return data;
 };
 
