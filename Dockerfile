@@ -14,7 +14,7 @@ COPY . .
 RUN npm install
 RUN npm update
 # Define environment variable
-ENV NODE_ENV production
+ENV NODE_ENV=production
 
 # Run the app when the container launches
 ENTRYPOINT ["tail", "-f", "/dev/null"]
