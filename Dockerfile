@@ -11,7 +11,7 @@ WORKDIR /usr/src/app
 RUN mkdir -p ./cache
 
 # Copy the current directory contents into the container at /usr/src/app
-COPY .env *.js *.credentials package.json README.md LICENSE .
+COPY . .
 
 # Install any needed packages specified in package.json
 RUN npm install && npm update
