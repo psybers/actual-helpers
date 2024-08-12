@@ -234,7 +234,7 @@ Build the container image
 
 Test if the docker container works correctly.
 
-`docker run -itd actual-helper --name actual-helper`
+`docker run -itd --name actual-helper actual-helper `
 
 `docker exec actual-helper node sync-banks.js`
 
