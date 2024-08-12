@@ -90,7 +90,7 @@ GoCardless/SimpleFIN.
 To run:
 
 ```console
-$ node sync-banks.js
+node sync-banks.js
 ```
 
 It is recommended to run this script once per day or week.
@@ -117,7 +117,7 @@ setting `INTEREST_PAYEE_NAME` in the `.env` file.
 To run:
 
 ```console
-$ node apply-interest.js
+node apply-interest.js
 ```
 
 It is recommended to run this script once per month.
@@ -147,7 +147,7 @@ You can optionally change the payee used for the transactions by setting
 To run:
 
 ```console
-$ node zestimate.js
+node zestimate.js
 ```
 
 It is recommended to run this script once per month.
@@ -185,7 +185,7 @@ You can optionally change the payee used for the transactions by setting
 To run:
 
 ```console
-$ node kbb.js
+node kbb.js
 ```
 
 It is recommended to run this script once per month.  Note that you will have
@@ -245,7 +245,7 @@ token by setting `SIMPLEFIN_CREDENTIALS` in the `.env` file.
 To run:
 
 ```console
-$ node track-investments.js
+node track-investments.js
 ```
 
 It is recommended to run this script once per month.
