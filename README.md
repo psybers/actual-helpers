@@ -22,7 +22,8 @@ This is a collection of useful scripts to help you manage your Actual Budget.
 
 ## Configuration
 
-Create a `.env` file in the root directory with the following content:
+Create a `.env` file in the root directory with the following content (or you
+can copy the `example.env` file):
 
 ```python
 ACTUAL_SERVER_URL="https://<Actual Budget server URL>"
@@ -52,6 +53,26 @@ SIMPLEFIN_CREDENTIALS="<credentials - not the setup token!>"
 ## Installation
 
 Run `npm install` to install any required dependencies.
+
+### Setup with Docker
+
+This assumes you already have a working version of Docker installed and have
+cloned the repo to a location of your choice.
+
+Build the container image:
+
+```console
+docker build -t actual-helper ./
+```
+
+Test if the Docker container works correctly:
+
+```console
+docker run -itd --name actual-helper actual-helper
+docker exec actual-helper node sync-banks.js
+```
+
+If it is working correctly, the bank sync should run.
 
 ## Scripts
 
@@ -229,19 +250,3 @@ $ node track-investments.js
 
 It is recommended to run this script once per month.
 
-
-
-# Setup with Docker:
-This guide assumes you already have a working version of docker installed and have cloned the repo to a location of your choice.
-
-Build the container image
-
-`docker build -t actual-helper ./`
-
-Test if the docker container works correctly.
-
-`docker run -itd --name actual-helper actual-helper `
-
-`docker exec actual-helper node sync-banks.js`
-
-If it is working correctly the bank sync should run.
