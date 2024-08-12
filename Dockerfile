@@ -8,11 +8,10 @@ WORKDIR /usr/src/app
 RUN mkdir -p ./cache
 
 # Copy the current directory contents into the container at /usr/src/app
-COPY . .
+COPY .env *.js *.credentials package.json README.md LICENSE .
 
 # Install any needed packages specified in package.json
-RUN npm install
-RUN npm update
+RUN npm install && npm update
 # Define environment variable
 ENV NODE_ENV=production
 
