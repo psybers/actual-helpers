@@ -57,7 +57,6 @@ async function getBitcoinPrice() {
     const targetBalance = Math.round(bitcoinPrice * btc_amount * 100);
     const diff = currentBalance - targetBalance;
     const payeeId = await ensurePayee(process.env.BITCOIN_PAYEE_NAME || 'Bitcoin Price Change');
-    console.log("FINISH", btc_amount, currentBalance, targetBalance, diff);
     if (diff != 0) {
       await api.importTransactions(account.id, [{
         date: new Date(),
