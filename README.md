@@ -50,6 +50,11 @@ INVESTMENT_CATEGORY_NAME="Investment"
 
 # optional, for logging into SimpleFIN
 SIMPLEFIN_CREDENTIALS="<credentials - not the setup token!>"
+
+# optional, for retrieving Bitcoin Price (these default to Kraken USD)
+BITCOIN_PRICE_URL="https://api.kraken.com/0/public/Ticker?pair=xbtusd"
+BITCOIN_PRICE_JSON_PATH="result.XXBTZUSD.c[0]"
+BITCOIN_PAYEE_NAME="Bitcoin Price Change"
 ```
 
 ## Installation
@@ -252,3 +257,17 @@ node track-investments.js
 
 It is recommended to run this script once per month.
 
+### Tracking the Bitcoin Price
+This script tracks the value of Bitcoin. It adds new transactions to keep the account balance equal to the latest value.
+
+There is one tag you can set in the account notes, BTC:X, where X is the number of Bitcoin you own, eg `BTC:0.01`
+
+You can optionally change the API endpoint used to retrieve the Bitcoin price, an example for retrieving the price in GBP is `BITCOIN_PRICE_URL="https://api.kraken.com/0/public/Ticker?pair=xbtgbp"` `BITCOIN_PRICE_JSON_PATH=".result.XXBTZGBP.c[0]"`
+
+To run:
+
+```console
+node sync-bitcoin.js
+```
+
+It is recommended to run this script once per day or week.
