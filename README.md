@@ -11,6 +11,7 @@ This is a collection of useful scripts to help you manage your Actual Budget.
     - [Tracking Home Prices (Zillow's Zestimate)](#tracking-home-prices-zillows-zestimate)
     - [Tracking Car Prices (Kelley Blue Book)](#tracking-car-prices-kelley-blue-book)
     - [Tracking Investment Accounts](#tracking-investment-accounts)
+    - [Tracking Bitcoin Price](#tracking-bitcoin-price)
 
 ## Requirements
 
@@ -257,7 +258,7 @@ node track-investments.js
 
 It is recommended to run this script once per month.
 
-### Tracking the Bitcoin Price
+### Tracking Bitcoin Price
 
 This script tracks the value of Bitcoin. It adds new transactions to keep the
 account balance equal to the latest value. There is one tag you can set in the
