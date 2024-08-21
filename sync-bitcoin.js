@@ -43,6 +43,7 @@ async function getBitcoinPrice() {
   if (!bitcoinPrice) {
     throw new Error("Unable to retrieve Bitcoin price. Check your BITCOIN_PRICE_URL and BITCOIN_PRICE_JSON_PATH environment variables");
   }
+  const payeeId = await ensurePayee(process.env.BITCOIN_PAYEE_NAME || 'Bitcoin Price Change');
   const accounts = await api.getAccounts();
   for (const account of accounts) {
     if (account.closed) {
@@ -56,7 +57,6 @@ async function getBitcoinPrice() {
     const currentBalance = await getAccountBalance(account);
     const targetBalance = Math.round(bitcoinPrice * btc_amount * 100);
     const diff = currentBalance - targetBalance;
-    const payeeId = await ensurePayee(process.env.BITCOIN_PAYEE_NAME || 'Bitcoin Price Change');
     if (diff != 0) {
       await api.importTransactions(account.id, [{
         date: new Date(),
