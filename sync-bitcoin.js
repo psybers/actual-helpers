@@ -25,7 +25,6 @@ function getValueAtPath(obj, path) {
 }
 
 async function getBitcoinPrice() {
-  let response = undefined;
   const url = process.env.BITCOIN_PRICE_URL || "https://api.kraken.com/0/public/Ticker?pair=xbtusd"
   const path = process.env.BITCOIN_PRICE_JSON_PATH || "result.XXBTZUSD.c[0]"
   try {
