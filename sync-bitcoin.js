@@ -38,11 +38,11 @@ async function getBitcoinPrice() {
 }
 
 (async () => {
-  await openBudget();
   const bitcoinPrice = await getBitcoinPrice();
   if (!bitcoinPrice) {
     throw new Error("Unable to retrieve Bitcoin price. Check your BITCOIN_PRICE_URL and BITCOIN_PRICE_JSON_PATH environment variables");
   }
+  await openBudget();
   const payeeId = await ensurePayee(process.env.BITCOIN_PAYEE_NAME || 'Bitcoin Price Change');
   const accounts = await api.getAccounts();
   for (const account of accounts) {
