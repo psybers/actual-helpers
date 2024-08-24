@@ -1,4 +1,4 @@
-const { closeBudget, openBudget, getTransactions, getAccountNote, ensurePayee } = require('./utils');
+const { closeBudget, openBudget, getTransactions, getAccountNote, getAccountBalance, ensurePayee } = require('./utils');
 const api = require('@actual-app/api');
 
 function getValueAtPath(obj, path) {
@@ -53,7 +53,7 @@ async function getBitcoinPrice() {
       continue;
     }
     const btc_amount = note.split('BTC:')[1].split(' ')[0];
-    const currentBalance = await api.getAccountBalance(account);
+    const currentBalance = await getAccountBalance(account);
     const targetBalance = Math.round(bitcoinPrice * btc_amount * 100);
     const diff = currentBalance - targetBalance;
     if (diff != 0) {
