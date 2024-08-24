@@ -1,6 +1,6 @@
 const api = require('@actual-app/api');
 const jsdom = require("jsdom");
-const { closeBudget, ensurePayee, getAccountBalance, getAccountNote, openBudget, showPercent, sleep } = require('./utils');
+const { closeBudget, ensurePayee, getAccountNote, openBudget, showPercent, sleep } = require('./utils');
 require("dotenv").config();
 
 async function getZestimate(URL) {
@@ -59,7 +59,7 @@ async function getZestimate(URL) {
           console.log('Was unable to get Zestimate, skipping');
           continue;
       }
-      const balance = await getAccountBalance(account);
+      const balance = await api.getAccountBalance(account);
       const diff = (zestimate * ownership) - balance;
 
       console.log('Zestimate:', zestimate);

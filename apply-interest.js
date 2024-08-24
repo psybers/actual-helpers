@@ -1,5 +1,5 @@
 const api = require('@actual-app/api');
-const { closeBudget, ensurePayee, getAccountBalance, getAccountNote, getLastTransactionDate, openBudget, showPercent } = require('./utils');
+const { closeBudget, ensurePayee, getAccountNote, getLastTransactionDate, openBudget, showPercent } = require('./utils');
 require("dotenv").config();
 
 (async () => {
@@ -35,7 +35,7 @@ require("dotenv").config();
         if (!lastDate) continue;
         const daysPassed = Math.floor((interestTransactionDate - new Date(lastDate)) / 86400000);
 
-        const balance = await getAccountBalance(account, interestTransactionDate);
+        const balance = await api.getAccountBalance(account, interestTransactionDate);
         const compoundedInterest = Math.round(balance * (Math.pow(1 + interestRate / 12, 1) - 1));
 
         interestRate = showPercent(interestRate);
