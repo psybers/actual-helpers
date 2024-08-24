@@ -1,6 +1,6 @@
 const api = require('@actual-app/api');
 const jsdom = require("jsdom");
-const { closeBudget, ensurePayee, getAccountBalance, getAccountNote, getLastTransactionDate, getTagValue, openBudget, setAccountNote, sleep } = require('./utils');
+const { closeBudget, ensurePayee, getAccountNote, getLastTransactionDate, getTagValue, openBudget, setAccountNote, sleep } = require('./utils');
 require("dotenv").config();
 
 async function getKBB(URL) {
@@ -52,7 +52,7 @@ async function getKBB(URL) {
         console.log('Fetching KBB for account:', account.name);
 
         const kbb = await getKBB(URL);
-        const balance = await getAccountBalance(account);
+        const balance = await api.getAccountBalance(account);
         const diff = kbb - balance;
 
         console.log('KBB:', kbb);

@@ -1,7 +1,7 @@
 const api = require('@actual-app/api');
 const fs = require('fs');
 const readline = require('readline-sync');
-const { closeBudget, ensureCategory, ensureCategoryGroup, ensurePayee, getAccountBalance, getAccountNote, getSimpleFinID, getTransactions, openBudget } = require('./utils');
+const { closeBudget, ensureCategory, ensureCategoryGroup, ensurePayee, getAccountNote, getSimpleFinID, getTransactions, openBudget } = require('./utils');
 require("dotenv").config();
 
 
@@ -112,7 +112,7 @@ const zeroTransaction = async (payment) => {
         }
 
         if (note.indexOf('calcInvestment') > -1) {
-          const currentBalance = await getAccountBalance(account);
+          const currentBalance = await api.getAccountBalance(account);
           const simpleFinID = await getSimpleFinID(account);
           const simplefinBalance = parseInt(simplefinBalances[simpleFinID] * 100);
           const diff = simplefinBalance - currentBalance;

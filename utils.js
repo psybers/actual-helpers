@@ -41,19 +41,6 @@ const Utils = {
     }
   },
 
-  getAccountBalance: async function (account, cutoffDate=new Date()) {
-    const data = await api.runQuery(
-      api.q('transactions')
-      .filter({
-        'account': account.id,
-        'date': { $lt: cutoffDate },
-      })
-      .calculate({ $sum: '$amount' })
-      .options({ splits: 'grouped' })
-    );
-    return data.data;
-  },
-
   getTransactions: async function (account) {
     const data = await api.runQuery(
       api.q('transactions')
