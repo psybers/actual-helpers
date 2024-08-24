@@ -53,7 +53,6 @@ const getSimplefinBalances = async () => {
     const data = await response.json();
     const accounts = data.accounts;
     const balances = {};
-    //accounts.forEach(a => balances[a.name] = parseFloat(a.balance));
     accounts.forEach(a => balances[a.id] = parseFloat(a.balance));
     return balances;
   } catch (e) {
