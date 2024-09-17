@@ -65,18 +65,21 @@ const Utils = {
     return data.data;
   },
 
-  getLastTransactionDate: async function (account, cutoffDate=undefined) {
-    if (cutoffDate === undefined) {
+  getLastTransactionDate: async function (account, cutoffDate=undefined, inbound=false) {
+    if (cutoffDate === undefined || cutoffDate === null) {
         cutoffDate = new Date();
         cutoffDate.setDate(cutoffDate.getDate() + 1);
     }
+    const filters = {
+      'account': account.id,
+      'date': { $lt: cutoffDate },
+    };
+    if (!inbound) {
+      filters['amount'] = { $gt: 0 };
+    }
     const data = await api.runQuery(
       api.q('transactions')
-        .filter({
-          'account': account.id,
-          'date': { $lt: cutoffDate },
-          'amount': { $gt: 0 },
-        })
+        .filter(filters)
         .select('date')
         .orderBy({ 'date': 'desc' })
         .limit(1)

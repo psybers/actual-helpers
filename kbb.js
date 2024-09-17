@@ -62,7 +62,7 @@ async function getKBB(URL) {
         if (diff != 0) {
           const daily = parseInt(getTagValue(note, 'kbbDailyMileage'));
           if (mileage && daily) {
-            let lastDate = await getLastTransactionDate(account);
+            let lastDate = await getLastTransactionDate(account, undefined, true);
             const parts = lastDate.split('-');
             lastDate = new Date(parts[0], parts[1] - 1, parts[2]);
             if (lastDate < new Date()) {
