@@ -1,3 +1,5 @@
+**Note: this script requires having a starting balance in the account**
+
 # Actual Budget Helper Scripts
 
 This is a collection of useful scripts to help you manage your Actual Budget.
@@ -105,6 +107,8 @@ It is recommended to run this script once per day or week.
 
 ### Loan Interest Calculator
 
+**Note: this script requires having a starting balance in the account**
+
 This script calculates the interest for a loan account and adds the interest
 transactions to Actual Budget.
 
@@ -161,6 +165,8 @@ node zestimate.js
 It is recommended to run this script once per month.
 
 ### Tracking Car Prices (Kelley Blue Book)
+
+**Note: this script requires having a starting balance in the account**
 
 This script tracks the Kelley Blue Book value for a car.  It adds new
 transactions to keep the account balance equal to the latest KBB value.
