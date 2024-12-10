@@ -1,0 +1,7 @@
+services:
+  acutal-helpers:
+    container_name: actual-helpers
+    image: ghcr.io/psybers/actual-helpers:latest
+    env_file: .env
+    ## uncomment the line below to specify the default script
+    #command: sync-banks.js
