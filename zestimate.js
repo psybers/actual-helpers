@@ -25,7 +25,7 @@ async function getZestimate(URL) {
     const dom = new jsdom.JSDOM(html);
 
     const zestimateText = dom.window.document.getElementById('home-details-home-values').getElementsByTagName('h3')[0].textContent;
-    return parseInt(zestimateText.replace('$', '').replace(',', '')) * 100;
+    return parseInt(zestimateText.replace('$', '').replaceAll(',', '')) * 100;
   } catch (error) {
     console.log('Error parsing Zillow page:');
     console.log(error);
