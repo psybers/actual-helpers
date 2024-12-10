@@ -8,6 +8,10 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
 
+concurrency:
+  group: 'docker'
+  cancel-in-progress: true
+
 jobs:
   publish-docker-image:
     runs-on: ubuntu-latest
