@@ -19,7 +19,7 @@ async function getKBB(URL) {
   const dom = new jsdom.JSDOM(html);
 
   const kbbText = dom.window.document.getElementById('PriceAdvisor').getElementsByTagName('text')[3].textContent;
-  return parseInt(kbbText.replace('$', '').replace(',', '')) * 100;
+  return parseInt(kbbText.replace('$', '').replaceAll(',', '')) * 100;
 }
 
 (async function() {
