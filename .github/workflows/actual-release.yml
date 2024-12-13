@@ -1,0 +1,25 @@
+name: Get latest Actual release
+on:
+  schedule:
+    - cron:  '0 17 * * *'
+jobs:
+  get-version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.REPO_SCOPED_TOKEN }}
+      - name: Fetch release version
+        run: |
+          curl -sL https://api.github.com/repos/actualbudget/actual/releases/latest | \
+          jq -r ".tag_name" > actual-latest.txt
+      - name: Check for modified files
+        id: git-check
+        run: echo ::set-output name=modified::$([ -z "`git status --porcelain`" ] && echo "false" || echo "true")
+      - name: Commit latest release version
+        if: steps.git-check.outputs.modified == 'true'
+        run: |
+          git config --global user.name 'Robert Dyer'
+          git config --global user.email 'rdyer@unl.edu'
+          git commit -am "New Actual release version"
+          git push
