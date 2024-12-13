@@ -43,6 +43,8 @@ ENV BITCOIN_PRICE_URL="https://api.kraken.com/0/public/Ticker?pair=xbtusd"
 ENV BITCOIN_PRICE_JSON_PATH="result.XXBTZUSD.c[0]"
 ENV BITCOIN_PAYEE_NAME="Bitcoin Price Change"
 
+VOLUME ./cache
+
 # Copy the current directory contents into the container at /usr/src/app
 COPY --chown=node:node . .
 

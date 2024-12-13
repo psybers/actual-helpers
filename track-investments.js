@@ -22,7 +22,8 @@ const getCredentials = async () => {
   const pw = auth.split(':')[1];
 
   const data = `${username}:${pw}`;
-  fs.writeFileSync('simplefin.credentials', data);
+  const cache = process.env.ACTUAL_CACHE_DIR || './cache';
+  fs.writeFileSync(cache + '/simplefin.credentials', data);
   console.log('SimpleFIN credentials:', data);
   return data;
 };
