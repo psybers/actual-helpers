@@ -64,7 +64,37 @@ BITCOIN_PAYEE_NAME="Bitcoin Price Change"
 
 Run `npm install` to install any required dependencies.
 
-### Setup with Docker
+### Using Docker Image
+
+The repository automatically builds and pushes a Docker image of itself every
+time the repository is modified or Actual makes a new release.  To use:
+
+```console
+docker pull ghcr.io/psybers/actual-helpers
+docker run -d --name actual-helpers ghcr.io/psybers/actual-helpers
+```
+
+Then you can run specific commands inside the container, e.g.:
+
+```console
+docker exec actual-helpers node sync-banks.js
+```
+
+### Using Docker Compose
+
+An easier way to run is using Docker compose.  Be sure to create your `.env`
+file with all required settings in it.  Then download the compose file
+[docker-compose.yml](docker-compose.yml) and run:
+
+```console
+docker compose up -d
+docker exec -it actual-helpers node sync-banks.js
+```
+
+Note that most scripts do not need the `-it` flag, but some might prompt for
+input (e.g. the track-investments.js script) and those will require this flag.
+
+### Building Docker Image
 
 This assumes you already have a working version of Docker installed and have
 cloned the repo to a location of your choice.
