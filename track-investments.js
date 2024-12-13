@@ -30,7 +30,8 @@ const getCredentials = async () => {
 
 const loadCredentials = () => {
   try {
-    return fs.readFileSync('simplefin.credentials', 'utf8');
+    const cache = process.env.ACTUAL_CACHE_DIR || './cache';
+    return fs.readFileSync(cache + '/simplefin.credentials', 'utf8');
   } catch (err) {
     return undefined;
   }
