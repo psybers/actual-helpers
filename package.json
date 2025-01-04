@@ -1,7 +1,7 @@
 {
   "dependencies": {
-    "better-sqlite3": "11.7.0",
     "@actual-app/api": "latest",
+    "better-sqlite3": "^11.7.2",
     "dotenv": "^16.4.5",
     "jsdom": "^24.1.0",
     "readline-sync": "^1.4.10"
