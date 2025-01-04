@@ -1,37 +1,48 @@
+const { Builder, Browser, By, until } = require('selenium-webdriver')
+const chrome = require('selenium-webdriver/chrome')
 const api = require('@actual-app/api');
 const jsdom = require("jsdom");
 const { closeBudget, ensurePayee, getAccountBalance, getAccountNote, openBudget, showPercent, sleep } = require('./utils');
 require("dotenv").config();
 
 async function getZestimate(URL) {
-  let response = undefined;
-  try {
-    response = await fetch(URL, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
-        'Accept-Language': 'en-GB,en;q=0.6',
-        'Referer': 'https://www.google.com/',
+    const options = new chrome.Options();
+    options.addArguments(
+      '--headless=new',
+      '--disable-gpu',
+      '--no-sandbox',
+      '--disable-blink-features=AutomationControlled',
+      '--start-maximized',
+    );
+    options.excludeSwitches("enable-automation")
+
+    let driver = await new Builder()
+        .forBrowser(Browser.CHROME)
+        .setChromeOptions(options)
+        .build();
+
+    try {
+      await driver.executeScript("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})");
+      await driver.sendDevToolsCommand('Network.setUserAgentOverride', {"userAgent": 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.53 Safari/537.36'});
+
+      await driver.get(URL);
+      const html = await driver.wait(until.elementLocated(By.css('body')), 5000).getAttribute('innerHTML');
+
+      try {
+        const dom = new jsdom.JSDOM(html);
+
+        const zestimateText = dom.window.document.getElementById('home-details-home-values').getElementsByTagName('h3')[0].textContent;
+        return parseInt(zestimateText.replace('$', '').replaceAll(',', '')) * 100;
+      } catch (error) {
+        console.log('Error parsing Zillow page:');
+        console.log(error);
+        console.log(html);
       }
-    });
-  } catch (error) {
-    console.log('Error fetching Zillow URL:');
-    console.log(error);
+    } finally {
+      await driver.quit();
+    }
+
     return undefined;
-  }
-
-  const html = await response.text();
-  try {
-    const dom = new jsdom.JSDOM(html);
-
-    const zestimateText = dom.window.document.getElementById('home-details-home-values').getElementsByTagName('h3')[0].textContent;
-    return parseInt(zestimateText.replace('$', '').replaceAll(',', '')) * 100;
-  } catch (error) {
-    console.log('Error parsing Zillow page:');
-    console.log(error);
-    console.log(html);
-  }
-  return undefined;
 }
 
 (async function() {

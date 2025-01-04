@@ -22,6 +22,8 @@ This is a collection of useful scripts to help you manage your Actual Budget.
     - [@actual-app/api](https://www.npmjs.com/package/@actual-app/api)
     - [dotenv](https://www.npmjs.com/package/dotenv)
     - [jsdom](https://www.npmjs.com/package/jsdom)
+    - [selenium-webdriver](https://www.npmjs.com/package/selenium-webdriver) (for `zestimate.js`)
+        - explicitly requires the use of [chromedrive](https://googlechromelabs.github.io/chrome-for-testing/#stable)
 
 ## Configuration
 
