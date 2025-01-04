@@ -1,30 +1,15 @@
 const { Builder, Browser, By, until } = require('selenium-webdriver')
-const chrome = require('selenium-webdriver/chrome')
 const api = require('@actual-app/api');
 const jsdom = require("jsdom");
 const { closeBudget, ensurePayee, getAccountBalance, getAccountNote, openBudget, showPercent, sleep } = require('./utils');
 require("dotenv").config();
 
 async function getZestimate(URL) {
-    const options = new chrome.Options();
-    options.addArguments(
-      '--headless=new',
-      '--disable-gpu',
-      '--no-sandbox',
-      '--disable-blink-features=AutomationControlled',
-      '--start-maximized',
-    );
-    options.excludeSwitches("enable-automation")
-
     let driver = await new Builder()
         .forBrowser(Browser.CHROME)
-        .setChromeOptions(options)
         .build();
 
     try {
-      await driver.executeScript("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})");
-      await driver.sendDevToolsCommand('Network.setUserAgentOverride', {"userAgent": 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.53 Safari/537.36'});
-
       await driver.get(URL);
       const html = await driver.wait(until.elementLocated(By.css('body')), 5000).getAttribute('innerHTML');
 
