@@ -1,6 +1,5 @@
 const { Builder, Browser, By, until } = require('selenium-webdriver')
 const api = require('@actual-app/api');
-const jsdom = require("jsdom");
 const { closeBudget, ensurePayee, getAccountBalance, getAccountNote, openBudget, showPercent, sleep } = require('./utils');
 require("dotenv").config();
 
@@ -14,10 +13,10 @@ async function getZestimate(URL) {
       const html = await driver.wait(until.elementLocated(By.css('body')), 5000).getAttribute('innerHTML');
 
       try {
-        const dom = new jsdom.JSDOM(html);
-
-        const zestimateText = dom.window.document.getElementById('home-details-home-values').getElementsByTagName('h3')[0].textContent;
-        return parseInt(zestimateText.replace('$', '').replaceAll(',', '')) * 100;
+        const match = html.match(/"zestimate":"(\d+)"/);
+        if (match) {
+          return parseInt(match[1]) * 100;
+        }
       } catch (error) {
         console.log('Error parsing Zillow page:');
         console.log(error);
