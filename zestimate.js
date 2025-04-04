@@ -13,7 +13,11 @@ async function getZestimate(URL) {
       const html = await driver.wait(until.elementLocated(By.css('body')), 5000).getAttribute('innerHTML');
 
       try {
-        const match = html.match(/"zestimate":"(\d+)"/);
+        let match = html.match(/"zestimate":"(\d+)"/);
+        if (match) {
+          return parseInt(match[1]) * 100;
+        }
+        match = html.match(/\\"zestimate\\":\\"(\d+)\\"/);
         if (match) {
           return parseInt(match[1]) * 100;
         }
