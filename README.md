@@ -186,7 +186,7 @@ address:123%20Example%2C%20St%20Anytown%2C%20CA%20%2C12345
 bedrooms:4
 bathrooms:2
 squareFootage:1600
-```.
+```
 
 "compCount" defaults to 25 for higher accuracy.  "propertyType" defaults to "Single Family".  
 See https://developers.rentcast.io/reference/property-types for other options.
