@@ -198,9 +198,9 @@ const Utils = {
     });
   },  
 
-  showPercent: function (pct) {
+  showPercent: function (pct, places=2) {
     return Number(pct).toLocaleString(undefined,
-        { style: 'percent', maximumFractionDigits: 2 })
+        { style: 'percent', maximumFractionDigits: places })
   },
 };
 
