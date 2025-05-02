@@ -19,7 +19,7 @@ async function getRentCast(URL) {
 (async function () {
     await openBudget();
 
-    const payeeId = await ensurePayee(process.env.RENTCASE_PAYEE_NAME || 'RentCast');
+    const payeeId = await ensurePayee(process.env.RENTCAST_PAYEE_NAME || 'RentCast');
 
     const accounts = await api.getAccounts();
     for (const account of accounts) {

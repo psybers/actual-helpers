@@ -175,8 +175,8 @@ from Zillow since they don't have as complete a database, but they are close in
 most cases.
 
 To use this script, you need to create a new account in Actual Budget and set
-the account note to populate the fields that RentCast needs: address, bedrooms, 
-bathrooms, squareFootage, and optionally propertyType and/or compCount.  Values with 
+the account note to populate the fields that RentCast needs: `address`, `bedrooms`, 
+`bathrooms`, `squareFootage`, and optionally `propertyType` and/or `compCount`.  Values with 
 spaces and special characters need to be URL encoded, an online encoder 
 like https://www.urlencoder.org/ is helpful.
 
@@ -190,7 +190,7 @@ bathrooms:2
 squareFootage:1600
 ```
 
-"compCount" defaults to 25 for higher accuracy.  "propertyType" defaults to "Single Family".  
+`compCount` defaults to 25 for higher accuracy.  `propertyType` defaults to "Single Family".  
 See https://developers.rentcast.io/reference/property-types for other options.
 
 Optionally, you can also specify if you only own a portion of the home by
