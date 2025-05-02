@@ -10,6 +10,7 @@ This is a collection of useful scripts to help you manage your Actual Budget.
 - Scripts:
     - [Sync Remote Banks](#sync-remote-banks)
     - [Loan Interest Calculator](#loan-interest-calculator)
+    - [Tracking Home Prices (RentCast's Value Estimate)](#tracking-home-prices-rentcasts-value-estimate)
     - [Tracking Home Prices (Zillow's Zestimate)](#tracking-home-prices-zillows-zestimate)
     - [Tracking Car Prices (Kelley Blue Book)](#tracking-car-prices-kelley-blue-book)
     - [Tracking Investment Accounts](#tracking-investment-accounts)
@@ -179,8 +180,9 @@ bathrooms, squareFootage, and optionally propertyType and/or compCount.  Values 
 spaces and special characters need to be URL encoded, an online encoder 
 like https://www.urlencoder.org/ is helpful.
 
-"address" needs be one line with commas seperating the address lines, then URL encoded.  
-For example, "123 Example, St Anytown, CA ,12345"
+`address` needs be one line with commas separating the address lines, then URL encoded. Supply number of bedrooms, bathrooms, and square footage for a more accurate estimate.
+
+Eaxmple Note using address "123 Example, St Anytown, CA ,12345":
 ```
 address:123%20Example%2C%20St%20Anytown%2C%20CA%20%2C12345
 bedrooms:4
