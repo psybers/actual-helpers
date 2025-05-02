@@ -179,7 +179,7 @@ the account note to populate the fields that RentCast needs: `address`, `bedroom
 spaces and special characters need to be URL encoded, an online encoder 
 like https://www.urlencoder.org/ is helpful.
 
-"address" needs be one line with commas seperating the address lines, then URL encoded.  
+`address` needs be one line with commas separating the address lines, then URL encoded.  
 For example, "123 Example, St Anytown, CA ,12345"
 ```
 address:123%20Example%2C%20St%20Anytown%2C%20CA%20%2C12345
