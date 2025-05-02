@@ -188,7 +188,7 @@ bathrooms:2
 squareFootage:1600
 ```
 
-"compCount" defaults to 25 for higher accuracy.  "propertyType" defaults to "Single Family".  
+`compCount` defaults to 25 for higher accuracy.  `propertyType` defaults to "Single Family".  
 See https://developers.rentcast.io/reference/property-types for other options.
 
 Optionally, you can also specify if you only own a portion of the home by
