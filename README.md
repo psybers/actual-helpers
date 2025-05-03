@@ -184,7 +184,7 @@ like https://www.urlencoder.org/ is helpful.
 URL encoded. Supply the number of bedrooms, bathrooms, and square footage for a
 more accurate estimate.
 
-Eaxmple Note using address "123 Example, St Anytown, CA ,12345":
+Example note using address "123 Example, St Anytown, CA ,12345":
 ```
 address:123%20Example%2C%20St%20Anytown%2C%20CA%20%2C12345
 bedrooms:4
