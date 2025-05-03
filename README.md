@@ -24,7 +24,7 @@ This is a collection of useful scripts to help you manage your Actual Budget.
     - [dotenv](https://www.npmjs.com/package/dotenv)
     - [jsdom](https://www.npmjs.com/package/jsdom)
     - [selenium-webdriver](https://www.npmjs.com/package/selenium-webdriver) (for `zestimate.js`)
-        - explicitly requires the use of [chromedrive](https://googlechromelabs.github.io/chrome-for-testing/#stable)
+        - explicitly requires the use of [chromedriver](https://googlechromelabs.github.io/chrome-for-testing/#stable)
 
 ## Configuration
 
@@ -49,18 +49,27 @@ INTEREST_PAYEE_NAME="Loan Interest"
 
 # optional, name of the payee for added interest transactions
 INVESTMENT_PAYEE_NAME="Investment"
-# optional, name of the cateogry group for added investment tracking transactions
+# optional, name of the category group for added investment tracking transactions
 INVESTMENT_CATEGORY_GROUP_NAME="Income"
 # optional, name of the category for added investment tracking transactions
 INVESTMENT_CATEGORY_NAME="Investment"
 
-# optional, for logging into SimpleFIN
-SIMPLEFIN_CREDENTIALS="<credentials - not the setup token!>"
+# optional, name of the payee for Zestimate entries
+ZESTIMATE_PAYEE_NAME="Zestimate"
 
-# optional, for retrieving Bitcoin Price (these default to Kraken USD)
+# optional, name of the payee for KBB entries
+KBB_PAYEE_NAME="KBB"
+
+# optional, the URL for tracking Bitcoin prices
 BITCOIN_PRICE_URL="https://api.kraken.com/0/public/Ticker?pair=xbtusd"
+# optional, the JSON path in the response to get the Bitcoin price
 BITCOIN_PRICE_JSON_PATH="result.XXBTZUSD.c[0]"
+# optional, name of the payee for Bitcoin entries
 BITCOIN_PAYEE_NAME="Bitcoin Price Change"
+
+#optional, RentCast API key for fetching property data
+RENTCAST_API_KEY="<Rentcast API key>"
+RENTCAST_PAYEE_NAME="RentCast"
 ```
 
 ## Installation
@@ -145,7 +154,7 @@ It is recommended to run this script once per day or week.
 This script calculates the interest for a loan account and adds the interest
 transactions to Actual Budget.
 
-For each account that you want to automaitcally calculate interest for, you
+For each account that you want to automatically calculate interest for, you
 need to edit the account notes and add the following tags:
 
 - `interestRate:0.0X` sets the interest rate to X percent (note: be sure to
@@ -169,22 +178,22 @@ It is recommended to run this script once per month.
 
 ### Tracking Home Prices (RentCast's value estimate)
 
-This script tracks the RentCast value for a home.  It adds new transactions
-to keep the account balance equal to the latest value.  Rentcast values differ
+This script tracks the RentCast value for a home.  It adds new transactions to
+keep the account balance equal to the latest value.  Rentcast values differ
 from Zillow since they don't have as complete a database, but they are close in
 most cases.
 
 To use this script, you need to create a new account in Actual Budget and set
-the account note to populate the fields that RentCast needs: `address`, `bedrooms`, 
-`bathrooms`, `squareFootage`, and optionally `propertyType` and/or `compCount`.  Values with 
-spaces and special characters need to be URL encoded, an online encoder 
-like https://www.urlencoder.org/ is helpful.
+the account note to populate the fields that RentCast needs: `address`,
+`bedrooms`, `bathrooms`, `squareFootage`, and optionally `propertyType` and/or
+`compCount`.  Values with spaces and special characters need to be URL encoded,
+an online encoder like https://www.urlencoder.org/ is helpful.
 
-`address` needs be one line with commas separating the address lines, then
-URL encoded. Supply the number of bedrooms, bathrooms, and square footage for a
+`address` needs be one line with commas separating the address lines, then URL
+encoded. Supply the number of bedrooms, bathrooms, and square footage for a
 more accurate estimate.
 
-Example note using address "123 Example, St Anytown, CA ,12345":
+Example note using address "123 Example, St Anytown, CA, 12345":
 ```
 address:123%20Example%2C%20St%20Anytown%2C%20CA%20%2C12345
 bedrooms:4
@@ -192,8 +201,9 @@ bathrooms:2
 squareFootage:1600
 ```
 
-`compCount` defaults to 25 for higher accuracy.  `propertyType` defaults to "Single Family".  
-See https://developers.rentcast.io/reference/property-types for other options.
+`compCount` defaults to 25 for higher accuracy.  `propertyType` defaults to
+"Single Family".  See https://developers.rentcast.io/reference/property-types
+for other options.
 
 Optionally, you can also specify if you only own a portion of the home by
 adding an `ownership:0.0X` tag to the account note.  For example, if you own
@@ -252,8 +262,8 @@ It is recommended to run this script once per month.
 This script tracks the Kelley Blue Book value for a car.  It adds new
 transactions to keep the account balance equal to the latest KBB value.
 
-To use this script, first you need to use the KBB website to find the value
-of your car.  Be sure to select "Private Party" for the value.  It should show
+To use this script, first you need to use the KBB website to find the value of
+your car.  Be sure to select "Private Party" for the value.  It should show
 something like this:
 
 ![KBB price of a car](images/kbb-price.png)
@@ -270,7 +280,8 @@ on the values in the URL.
 - `kbbZipcode:XXXXX`
 - `kbbCondition:good` (or whatever condition you want to use)
 - `kbbMileage:XXXXX` (miles on the car, no commas)
-- `kbbDailyMileage:XXXXX` (if given, will auto-update the mileage based on this daily average)
+- `kbbDailyMileage:XXXXX` (if given, will auto-update the mileage based on this
+  daily average)
 - `kbbVehicleid:XXXXXX`
 - `kbbOptions:XXX,XXX,XXX,...`
 
@@ -328,8 +339,8 @@ need to update this to add additional notes to look for.
 You can optionally change the payee used for the transactions by setting
 `INVESTMENT_PAYEE_NAME` in the `.env` file.
 
-You can optionally change the category group used for the transactions by setting
-`INVESTMENT_CATEGORY_GROUP_NAME` in the `.env` file.
+You can optionally change the category group used for the transactions by
+setting `INVESTMENT_CATEGORY_GROUP_NAME` in the `.env` file.
 
 You can optionally change the category used for the transactions by setting
 `INVESTMENT_CATEGORY_NAME` in the `.env` file.
@@ -349,7 +360,7 @@ It is recommended to run this script once per month.
 
 This script tracks the value of Bitcoin. It adds new transactions to keep the
 account balance equal to the latest value. There is one tag you can set in the
-account notes, BTC:X, where X is the number of Bitcoin you own, eg `BTC:0.01`
+account notes, BTC:X, where X is the number of Bitcoin you own, e.g. `BTC:0.01`
 You can optionally change the API endpoint used to retrieve the Bitcoin price,
 an example for retrieving the price in GBP is:
 
