@@ -12,7 +12,7 @@ This is a collection of useful scripts to help you manage your Actual Budget.
     - [Loan Interest Calculator](#loan-interest-calculator)
     - [Tracking Home Prices (RentCast's Value Estimate)](#tracking-home-prices-rentcasts-value-estimate)
     - [Tracking Home Prices (Zillow's Zestimate)](#tracking-home-prices-zillows-zestimate)
-    - [Tracking Car Prices (Kelley Blue Book)](#tracking-car-prices-kelley-blue-book)
+    - [Tracking Vehicle Prices (Kelley Blue Book)](#tracking-vehicle-prices-kelley-blue-book)
     - [Tracking Investment Accounts](#tracking-investment-accounts)
     - [Tracking Bitcoin Price](#tracking-bitcoin-price)
 
@@ -255,12 +255,12 @@ node zestimate.js
 
 It is recommended to run this script once per month.
 
-### Tracking Car Prices (Kelley Blue Book)
+### Tracking Vehicle Prices (Kelley Blue Book)
 
 **Note: this script requires having a starting balance in the account**
 
-This script tracks the Kelley Blue Book value for a car.  It adds new
-transactions to keep the account balance equal to the latest KBB value.
+This script tracks the Kelley Blue Book value for a car or motorcycle.  It adds
+new transactions to keep the account balance equal to the latest KBB value.
 
 To use this script, first you need to use the KBB website to find the value of
 your car.  Be sure to select "Private Party" for the value.  It should show
@@ -284,6 +284,15 @@ on the values in the URL.
   daily average)
 - `kbbVehicleid:XXXXXX`
 - `kbbOptions:XXX,XXX,XXX,...`
+
+If you are tracking a motorcycle, use these settings:
+
+```
+kbbURL:https://www.kbb.com/motorcycles/suzuki/dr650s/2018/?
+kbbPriceType:tradein (or retail)
+```
+
+Be sure to find the correct URL for your specific motorcycle and year.
 
 You can optionally change the payee used for the transactions by setting
 `KBB_PAYEE_NAME` in the `.env` file.
