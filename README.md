@@ -10,6 +10,7 @@ This is a collection of useful scripts to help you manage your Actual Budget.
 - Scripts:
     - [Sync Remote Banks](#sync-remote-banks)
     - [Loan Interest Calculator](#loan-interest-calculator)
+    - [Tracking Home Prices (RentCast's Value Estimate)](#tracking-home-prices-rentcasts-value-estimate)
     - [Tracking Home Prices (Zillow's Zestimate)](#tracking-home-prices-zillows-zestimate)
     - [Tracking Car Prices (Kelley Blue Book)](#tracking-car-prices-kelley-blue-book)
     - [Tracking Investment Accounts](#tracking-investment-accounts)
@@ -162,6 +163,54 @@ To run:
 
 ```console
 node apply-interest.js
+```
+
+It is recommended to run this script once per month.
+
+### Tracking Home Prices (RentCast's value estimate)
+
+This script tracks the RentCast value for a home.  It adds new transactions
+to keep the account balance equal to the latest value.  Rentcast values differ
+from Zillow since they don't have as complete a database, but they are close in
+most cases.
+
+To use this script, you need to create a new account in Actual Budget and set
+the account note to populate the fields that RentCast needs: `address`, `bedrooms`, 
+`bathrooms`, `squareFootage`, and optionally `propertyType` and/or `compCount`.  Values with 
+spaces and special characters need to be URL encoded, an online encoder 
+like https://www.urlencoder.org/ is helpful.
+
+`address` needs be one line with commas separating the address lines, then
+URL encoded. Supply the number of bedrooms, bathrooms, and square footage for a
+more accurate estimate.
+
+Example note using address "123 Example, St Anytown, CA ,12345":
+```
+address:123%20Example%2C%20St%20Anytown%2C%20CA%20%2C12345
+bedrooms:4
+bathrooms:2
+squareFootage:1600
+```
+
+`compCount` defaults to 25 for higher accuracy.  `propertyType` defaults to "Single Family".  
+See https://developers.rentcast.io/reference/property-types for other options.
+
+Optionally, you can also specify if you only own a portion of the home by
+adding an `ownership:0.0X` tag to the account note.  For example, if you own
+10% of the home, add `ownership:0.10` to the account note.  The script will
+then use that percentage to track the home's value.
+
+You will need to create an account on https://app.rentcast.io/app/api and setup
+billing for an API Developer plan.  They offer 50 API calls per month for free.
+Copy you API key into `RENTCAST_API_KEY` setting the `.env` file.
+
+You can optionally change the payee used for the transactions by setting
+`RENTCAST_PAYEE_NAME` in the `.env` file.
+
+To run:
+
+```console
+node rentcast.js
 ```
 
 It is recommended to run this script once per month.
