@@ -17,7 +17,6 @@ async function getKBB(URL) {
   const html = await response.text();
   const regex = /"value":\s*(\d+)/;
   const match = html.match(regex);
-  // console.log(match[1]);
   const kbbText = match[1];
   console.log(`kbbText: ${kbbText}`);
   return parseInt(kbbText * 100);
