@@ -163,7 +163,7 @@ need to edit the account notes and add the following tags:
 
 As an example, if your loan is at 4.5% interest and you want to insert an
 interest transaction on the 28th of the month, set the account note to
-`interestRate:0.045 interestDay:28`.
+`interestRate:0.045 interestDay:28 `.
 
 You can optionally change the payee used for the interest transactions by
 setting `INTEREST_PAYEE_NAME` in the `.env` file.
@@ -173,6 +173,15 @@ To run:
 ```console
 node apply-interest.js
 ```
+
+If your bank uses an "actual/actual" calculation, taking the number of days 
+in the month into account, run the alternative version.  All option above 
+apply the same. 
+
+```console
+node apply-aa-interest.js
+```
+
 
 It is recommended to run this script once per month.
 
