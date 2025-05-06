@@ -200,7 +200,7 @@ const Utils = {
 
   showPercent: function (pct) {
     return Number(pct).toLocaleString(undefined,
-        { style: 'percent', maximumFractionDigits: 2 })
+        { style: 'percent', maximumFractionDigits: 4 })
   },
 };
 
