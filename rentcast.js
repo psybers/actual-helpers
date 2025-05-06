@@ -44,7 +44,7 @@ async function getRentCast(URL) {
 
                 let ownership = 1;
                 if (note.indexOf('ownership:') > -1) {
-                  ownership = parseFloat(note.split('ownership:')[1].split(' ')[0]);
+                  ownership = parseFloat(getTagValue(note, 'ownership'));
                 }
           
                 console.log('Fetching RentCast for account:', account.name);

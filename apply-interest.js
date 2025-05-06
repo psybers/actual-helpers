@@ -1,5 +1,5 @@
 const api = require('@actual-app/api');
-const { closeBudget, ensurePayee, getAccountBalance, getAccountNote, getLastTransactionDate, openBudget, showPercent } = require('./utils');
+const { closeBudget, ensurePayee, getAccountBalance, getAccountNote, getLastTransactionDate, getTagValue, openBudget, showPercent } = require('./utils');
 require("dotenv").config();
 
 (async () => {
@@ -17,8 +17,8 @@ require("dotenv").config();
 
     if (note) {
       if (note.indexOf('interestRate:') > -1 && note.indexOf('interestDay:') > -1) {
-        let interestRate = parseFloat(note.split('interestRate:')[1].split(' ')[0]);
-        const interestDay = parseInt(note.split('interestDay:')[1].split(' ')[0]);
+        let interestRate = parseFloat(getTagValue(note, 'interestRate'));
+        const interestDay = parseInt(getTagValue(note, 'interestDay'));
 
         const interestTransactionDate = new Date();
         if (interestTransactionDate.getDate() < interestDay) {
