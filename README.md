@@ -165,6 +165,11 @@ As an example, if your loan is at 4.5% interest and you want to insert an
 interest transaction on the 28th of the month, set the account note to
 `interestRate:0.045 interestDay:28`.
 
+By default, interest is calculated using the 30/360 method where interest is
+computed monthly using 30/360 (or 1/12) of the interest rate.  If you need to
+compute interest using the ACTUAL/ACTUAL method, set `interest:actual` in the
+note.  If you need to compute interest daily, set `interest:daily`.
+
 You can optionally change the payee used for the interest transactions by
 setting `INTEREST_PAYEE_NAME` in the `.env` file.
 
