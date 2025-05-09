@@ -15,7 +15,7 @@ const getCredentials = async () => {
 
   const response = await fetch(url, { method: 'post' });
   const api_url = await response.text();
-
+  console.log(api_url)
   const rest = api_url.split('//', 2)[1];
   const auth = rest.split('@', 1)[0];
   const username = auth.split(':')[0];
@@ -114,7 +114,17 @@ const zeroTransaction = async (payment) => {
 
         if (note.indexOf('calcInvestment') > -1) {
           const currentBalance = await getAccountBalance(account);
-          const simpleFinID = await getSimpleFinID(account);
+          let simpleFinID = await getSimpleFinID(account);
+          if (!simpleFinID) {
+            console.log('No SimpleFin ID found for account:', account.name, '. Looking for it in the note...');
+            const lines = note.split('\n'); // Split into lines
+            const simpleFinIDLine = lines.find(line => line.startsWith('simpleFinID:')); // Find the correct line
+            simpleFinID = simpleFinIDLine.split(':')[1];
+            if (!simpleFinID) {
+              continue;
+            }
+          }
+          console.log('simpleFinID:', simpleFinID);
           const simplefinBalance = parseInt(simplefinBalances[simpleFinID] * 100);
           const diff = simplefinBalance - currentBalance;
 
@@ -141,3 +151,5 @@ const zeroTransaction = async (payment) => {
 
   await closeBudget();
 })();
+
+exports = { getSimplefinBalances };
