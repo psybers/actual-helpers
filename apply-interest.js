@@ -1,6 +1,11 @@
 const api = require('@actual-app/api');
-const { closeBudget, ensurePayee, getAccountBalance, getAccountNote, getLastTransactionDate, openBudget, showPercent } = require('./utils');
+const { closeBudget, ensurePayee, getAccountBalance, getAccountNote, getLastTransactionDate, getTagValue, openBudget, showPercent } = require('./utils');
 require("dotenv").config();
+
+function daysInYear(year) {
+  // Check if the year is a leap year
+  return ((year % 4 === 0 && year % 100 > 0) || year %400 == 0) ? 366 : 365;
+}
 
 (async () => {
   await openBudget();
@@ -16,9 +21,12 @@ require("dotenv").config();
     const note = await getAccountNote(account);
 
     if (note) {
-      if (note.indexOf('interestRate:') > -1 && note.indexOf('interestDay:') > -1) {
-        let interestRate = parseFloat(note.split('interestRate:')[1].split(' ')[0]);
-        const interestDay = parseInt(note.split('interestDay:')[1].split(' ')[0]);
+      let interestRate = parseFloat(getTagValue(note, 'interestRate', 0.0));
+      const interestDay = parseInt(getTagValue(note, 'interestDay', 0));
+
+      if (interestRate && interestDay) {
+        const kind = getTagValue(note, 'interest', 'monthly');
+        const isDaily = kind == 'daily';
 
         const interestTransactionDate = new Date();
         if (interestTransactionDate.getDate() < interestDay) {
@@ -35,8 +43,22 @@ require("dotenv").config();
         if (!lastDate) continue;
         const daysPassed = Math.floor((interestTransactionDate - new Date(lastDate)) / 86400000);
 
+        let period = 12;
+        let numPeriods = 1
+        switch (kind) {
+          case 'daily':
+            period = daysInYear(interestTransactionDate.getFullYear());
+            numPeriods = daysPassed;
+            break;
+          case 'actual':
+            period = daysInYear(interestTransactionDate.getFullYear()) / daysPassed;
+            break;
+          default:
+            break;
+        }
+
         const balance = await getAccountBalance(account, interestTransactionDate);
-        const compoundedInterest = Math.round(balance * (Math.pow(1 + interestRate / 12, 1) - 1));
+        const compoundedInterest = Math.round(balance * (Math.pow(1 + interestRate / period, numPeriods) - 1));
 
         interestRate = showPercent(interestRate);
 
@@ -52,7 +74,7 @@ require("dotenv").config();
             payee: payeeId,
             amount: compoundedInterest,
             cleared: true,
-            notes: `Interest for 1 month at ${interestRate}`,
+            notes: `Interest for ${daysPassed} days, ${balance / 100.0} at ${interestRate} (${isDaily ? "daily" : "monthly"})`,
           }]);
         }
       }

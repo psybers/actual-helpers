@@ -18,8 +18,15 @@ async function getKBB(URL) {
   const html = await response.text();
   const dom = new jsdom.JSDOM(html);
 
-  const kbbText = dom.window.document.getElementById('PriceAdvisor').getElementsByTagName('text')[3].textContent;
-  return parseInt(kbbText.replace('$', '').replaceAll(',', '')) * 100;
+  const advisor = dom.window.document.getElementById('PriceAdvisor');
+  if (advisor) {
+    const kbbText = advisor.getElementsByTagName('text')[3].textContent;
+    return parseInt(kbbText.replace('$', '').replaceAll(',', '')) * 100;
+  }
+
+  const regex = /"value":\s*(\d+)/;
+  const match = html.match(regex);
+  return parseInt(match[1]) * 100;
 }
 
 (async function() {
@@ -48,6 +55,9 @@ async function getKBB(URL) {
 
         const options = getTagValue(note, 'kbbOptions');
         if (options) URL += `&optionids=${options}`;
+
+        const pricetype = getTagValue(note, 'kbbPriceType');
+        if (pricetype) URL += `&pricetype=${pricetype}`;
 
         console.log('Fetching KBB for account:', account.name);
 

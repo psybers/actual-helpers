@@ -1,6 +1,6 @@
 const { Builder, Browser, By, until } = require('selenium-webdriver')
 const api = require('@actual-app/api');
-const { closeBudget, ensurePayee, getAccountBalance, getAccountNote, openBudget, showPercent, sleep } = require('./utils');
+const { closeBudget, ensurePayee, getAccountBalance, getAccountNote, getTagValue, openBudget, showPercent, sleep } = require('./utils');
 require("dotenv").config();
 
 async function getZestimate(URL) {
@@ -43,11 +43,11 @@ async function getZestimate(URL) {
     const note = await getAccountNote(account);
 
     if (note && note.indexOf('zestimate:') > -1) {
-      const URL = note.split('zestimate:')[1].split(' ')[0];
+      const URL = getTagValue(note, 'zestimate');
 
       let ownership = 1;
       if (note.indexOf('ownership:') > -1) {
-        ownership = parseFloat(note.split('ownership:')[1].split(' ')[0]);
+        ownership = parseFloat(getTagValue(note, 'ownership'));
       }
 
       console.log('Fetching zestimate for account:', account.name);
