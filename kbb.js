@@ -18,8 +18,15 @@ async function getKBB(URL) {
   const html = await response.text();
   const dom = new jsdom.JSDOM(html);
 
-  const kbbText = dom.window.document.getElementById('PriceAdvisor').getElementsByTagName('text')[3].textContent;
-  return parseInt(kbbText.replace('$', '').replace(',', '')) * 100;
+  const advisor = dom.window.document.getElementById('PriceAdvisor');
+  if (advisor) {
+    const kbbText = advisor.getElementsByTagName('text')[3].textContent;
+    return parseInt(kbbText.replace('$', '').replaceAll(',', '')) * 100;
+  }
+
+  const regex = /"value":\s*(\d+)/;
+  const match = html.match(regex);
+  return parseInt(match[1]) * 100;
 }
 
 (async function() {
@@ -49,6 +56,9 @@ async function getKBB(URL) {
         const options = getTagValue(note, 'kbbOptions');
         if (options) URL += `&optionids=${options}`;
 
+        const pricetype = getTagValue(note, 'kbbPriceType');
+        if (pricetype) URL += `&pricetype=${pricetype}`;
+
         console.log('Fetching KBB for account:', account.name);
 
         const kbb = await getKBB(URL);
@@ -63,21 +73,23 @@ async function getKBB(URL) {
           const daily = parseInt(getTagValue(note, 'kbbDailyMileage'));
           if (mileage && daily) {
             let lastDate = await getLastTransactionDate(account, undefined, true);
-            const parts = lastDate.split('-');
-            lastDate = new Date(parts[0], parts[1] - 1, parts[2]);
-            if (lastDate < new Date()) {
-              let today = new Date();
-              today = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-              const days = Math.round((today - lastDate) / (1000 * 60 * 60 * 24));
-              if (days > 0) {
-                mileage += days * daily;
-
-                const newNote = note.replace(/kbbMileage:\d+/, `kbbMileage:${mileage}`);
-                await setAccountNote(account, newNote);
-
-                console.log('daily mileage:', daily);
-                console.log('days since last update:', days);
-                console.log('Updated mileage to:', mileage);
+            if (lastDate) {
+              const parts = lastDate.split('-');
+              lastDate = new Date(parts[0], parts[1] - 1, parts[2]);
+              if (lastDate < new Date()) {
+                let today = new Date();
+                today = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                const days = Math.round((today - lastDate) / (1000 * 60 * 60 * 24));
+                if (days > 0) {
+                  mileage += days * daily;
+  
+                  const newNote = note.replace(/kbbMileage:\d+/, `kbbMileage:${mileage}`);
+                  await setAccountNote(account, newNote);
+  
+                  console.log('daily mileage:', daily);
+                  console.log('days since last update:', days);
+                  console.log('Updated mileage to:', mileage);
+                }
               }
             }
           }

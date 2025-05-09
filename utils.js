@@ -148,6 +148,9 @@ const Utils = {
   },
 
   getTagValue: function (note, tag, defaultValue=undefined) {
+    if (!note) {
+      return undefined;
+    }
     tag += ':'
     const tagIndex = note.indexOf(tag);
     if (tagIndex === -1) {
@@ -200,7 +203,7 @@ const Utils = {
 
   showPercent: function (pct) {
     return Number(pct).toLocaleString(undefined,
-        { style: 'percent', maximumFractionDigits: 2 })
+        { style: 'percent', maximumFractionDigits: 4 })
   },
 };
 

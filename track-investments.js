@@ -22,14 +22,16 @@ const getCredentials = async () => {
   const pw = auth.split(':')[1];
 
   const data = `${username}:${pw}`;
-  fs.writeFileSync('simplefin.credentials', data);
+  const cache = process.env.ACTUAL_CACHE_DIR || './cache';
+  fs.writeFileSync(cache + '/simplefin.credentials', data);
   console.log('SimpleFIN credentials:', data);
   return data;
 };
 
 const loadCredentials = () => {
   try {
-    return fs.readFileSync('simplefin.credentials', 'utf8');
+    const cache = process.env.ACTUAL_CACHE_DIR || './cache';
+    return fs.readFileSync(cache + '/simplefin.credentials', 'utf8');
   } catch (err) {
     return undefined;
   }

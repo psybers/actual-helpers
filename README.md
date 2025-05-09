@@ -1,3 +1,5 @@
+**Note: this script requires having a starting balance in the account**
+
 # Actual Budget Helper Scripts
 
 This is a collection of useful scripts to help you manage your Actual Budget.
@@ -8,8 +10,9 @@ This is a collection of useful scripts to help you manage your Actual Budget.
 - Scripts:
     - [Sync Remote Banks](#sync-remote-banks)
     - [Loan Interest Calculator](#loan-interest-calculator)
+    - [Tracking Home Prices (RentCast's Value Estimate)](#tracking-home-prices-rentcasts-value-estimate)
     - [Tracking Home Prices (Zillow's Zestimate)](#tracking-home-prices-zillows-zestimate)
-    - [Tracking Car Prices (Kelley Blue Book)](#tracking-car-prices-kelley-blue-book)
+    - [Tracking Vehicle Prices (Kelley Blue Book)](#tracking-vehicle-prices-kelley-blue-book)
     - [Tracking Investment Accounts](#tracking-investment-accounts)
     - [Tracking Bitcoin Price](#tracking-bitcoin-price)
 
@@ -20,6 +23,8 @@ This is a collection of useful scripts to help you manage your Actual Budget.
     - [@actual-app/api](https://www.npmjs.com/package/@actual-app/api)
     - [dotenv](https://www.npmjs.com/package/dotenv)
     - [jsdom](https://www.npmjs.com/package/jsdom)
+    - [selenium-webdriver](https://www.npmjs.com/package/selenium-webdriver) (for `zestimate.js`)
+        - explicitly requires the use of [chromedriver](https://googlechromelabs.github.io/chrome-for-testing/#stable)
 
 ## Configuration
 
@@ -44,25 +49,64 @@ INTEREST_PAYEE_NAME="Loan Interest"
 
 # optional, name of the payee for added interest transactions
 INVESTMENT_PAYEE_NAME="Investment"
-# optional, name of the cateogry group for added investment tracking transactions
+# optional, name of the category group for added investment tracking transactions
 INVESTMENT_CATEGORY_GROUP_NAME="Income"
 # optional, name of the category for added investment tracking transactions
 INVESTMENT_CATEGORY_NAME="Investment"
 
-# optional, for logging into SimpleFIN
-SIMPLEFIN_CREDENTIALS="<credentials - not the setup token!>"
+# optional, name of the payee for Zestimate entries
+ZESTIMATE_PAYEE_NAME="Zestimate"
 
-# optional, for retrieving Bitcoin Price (these default to Kraken USD)
+# optional, name of the payee for KBB entries
+KBB_PAYEE_NAME="KBB"
+
+# optional, the URL for tracking Bitcoin prices
 BITCOIN_PRICE_URL="https://api.kraken.com/0/public/Ticker?pair=xbtusd"
+# optional, the JSON path in the response to get the Bitcoin price
 BITCOIN_PRICE_JSON_PATH="result.XXBTZUSD.c[0]"
+# optional, name of the payee for Bitcoin entries
 BITCOIN_PAYEE_NAME="Bitcoin Price Change"
+
+#optional, RentCast API key for fetching property data
+RENTCAST_API_KEY="<Rentcast API key>"
+RENTCAST_PAYEE_NAME="RentCast"
 ```
 
 ## Installation
 
 Run `npm install` to install any required dependencies.
 
-### Setup with Docker
+### Using Docker Image
+
+The repository automatically builds and pushes a Docker image of itself every
+time the repository is modified or Actual makes a new release.  To use:
+
+```console
+docker pull ghcr.io/psybers/actual-helpers
+docker run -d --name actual-helpers ghcr.io/psybers/actual-helpers
+```
+
+Then you can run specific commands inside the container, e.g.:
+
+```console
+docker exec actual-helpers node sync-banks.js
+```
+
+### Using Docker Compose
+
+An easier way to run is using Docker compose.  Be sure to create your `.env`
+file with all required settings in it.  Then download the compose file
+[docker-compose.yml](docker-compose.yml) and run:
+
+```console
+docker compose up -d
+docker exec -it actual-helpers node sync-banks.js
+```
+
+Note that most scripts do not need the `-it` flag, but some might prompt for
+input (e.g. the track-investments.js script) and those will require this flag.
+
+### Building Docker Image
 
 This assumes you already have a working version of Docker installed and have
 cloned the repo to a location of your choice.
@@ -105,10 +149,12 @@ It is recommended to run this script once per day or week.
 
 ### Loan Interest Calculator
 
+**Note: this script requires having a starting balance in the account**
+
 This script calculates the interest for a loan account and adds the interest
 transactions to Actual Budget.
 
-For each account that you want to automaitcally calculate interest for, you
+For each account that you want to automatically calculate interest for, you
 need to edit the account notes and add the following tags:
 
 - `interestRate:0.0X` sets the interest rate to X percent (note: be sure to
@@ -119,6 +165,11 @@ As an example, if your loan is at 4.5% interest and you want to insert an
 interest transaction on the 28th of the month, set the account note to
 `interestRate:0.045 interestDay:28`.
 
+By default, interest is calculated using the 30/360 method where interest is
+computed monthly using 30/360 (or 1/12) of the interest rate.  If you need to
+compute interest using the ACTUAL/ACTUAL method, set `interest:actual` in the
+note.  If you need to compute interest daily, set `interest:daily`.
+
 You can optionally change the payee used for the interest transactions by
 setting `INTEREST_PAYEE_NAME` in the `.env` file.
 
@@ -126,6 +177,55 @@ To run:
 
 ```console
 node apply-interest.js
+```
+
+It is recommended to run this script once per month.
+
+### Tracking Home Prices (RentCast's value estimate)
+
+This script tracks the RentCast value for a home.  It adds new transactions to
+keep the account balance equal to the latest value.  Rentcast values differ
+from Zillow since they don't have as complete a database, but they are close in
+most cases.
+
+To use this script, you need to create a new account in Actual Budget and set
+the account note to populate the fields that RentCast needs: `address`,
+`bedrooms`, `bathrooms`, `squareFootage`, and optionally `propertyType` and/or
+`compCount`.  Values with spaces and special characters need to be URL encoded,
+an online encoder like https://www.urlencoder.org/ is helpful.
+
+`address` needs be one line with commas separating the address lines, then URL
+encoded. Supply the number of bedrooms, bathrooms, and square footage for a
+more accurate estimate.
+
+Example note using address "123 Example, St Anytown, CA, 12345":
+```
+address:123%20Example%2C%20St%20Anytown%2C%20CA%20%2C12345
+bedrooms:4
+bathrooms:2
+squareFootage:1600
+```
+
+`compCount` defaults to 25 for higher accuracy.  `propertyType` defaults to
+"Single Family".  See https://developers.rentcast.io/reference/property-types
+for other options.
+
+Optionally, you can also specify if you only own a portion of the home by
+adding an `ownership:0.0X` tag to the account note.  For example, if you own
+10% of the home, add `ownership:0.10` to the account note.  The script will
+then use that percentage to track the home's value.
+
+You will need to create an account on https://app.rentcast.io/app/api and setup
+billing for an API Developer plan.  They offer 50 API calls per month for free.
+Copy you API key into `RENTCAST_API_KEY` setting the `.env` file.
+
+You can optionally change the payee used for the transactions by setting
+`RENTCAST_PAYEE_NAME` in the `.env` file.
+
+To run:
+
+```console
+node rentcast.js
 ```
 
 It is recommended to run this script once per month.
@@ -160,13 +260,15 @@ node zestimate.js
 
 It is recommended to run this script once per month.
 
-### Tracking Car Prices (Kelley Blue Book)
+### Tracking Vehicle Prices (Kelley Blue Book)
 
-This script tracks the Kelley Blue Book value for a car.  It adds new
-transactions to keep the account balance equal to the latest KBB value.
+**Note: this script requires having a starting balance in the account**
 
-To use this script, first you need to use the KBB website to find the value
-of your car.  Be sure to select "Private Party" for the value.  It should show
+This script tracks the Kelley Blue Book value for a car or motorcycle.  It adds
+new transactions to keep the account balance equal to the latest KBB value.
+
+To use this script, first you need to use the KBB website to find the value of
+your car.  Be sure to select "Private Party" for the value.  It should show
 something like this:
 
 ![KBB price of a car](images/kbb-price.png)
@@ -183,9 +285,19 @@ on the values in the URL.
 - `kbbZipcode:XXXXX`
 - `kbbCondition:good` (or whatever condition you want to use)
 - `kbbMileage:XXXXX` (miles on the car, no commas)
-- `kbbDailyMileage:XXXXX` (if given, will auto-update the mileage based on this daily average)
+- `kbbDailyMileage:XXXXX` (if given, will auto-update the mileage based on this
+  daily average)
 - `kbbVehicleid:XXXXXX`
 - `kbbOptions:XXX,XXX,XXX,...`
+
+If you are tracking a motorcycle, use these settings:
+
+```
+kbbURL:https://www.kbb.com/motorcycles/suzuki/dr650s/2018/?
+kbbPriceType:tradein (or retail)
+```
+
+Be sure to find the correct URL for your specific motorcycle and year.
 
 You can optionally change the payee used for the transactions by setting
 `KBB_PAYEE_NAME` in the `.env` file.
@@ -241,8 +353,8 @@ need to update this to add additional notes to look for.
 You can optionally change the payee used for the transactions by setting
 `INVESTMENT_PAYEE_NAME` in the `.env` file.
 
-You can optionally change the category group used for the transactions by setting
-`INVESTMENT_CATEGORY_GROUP_NAME` in the `.env` file.
+You can optionally change the category group used for the transactions by
+setting `INVESTMENT_CATEGORY_GROUP_NAME` in the `.env` file.
 
 You can optionally change the category used for the transactions by setting
 `INVESTMENT_CATEGORY_NAME` in the `.env` file.
@@ -262,7 +374,7 @@ It is recommended to run this script once per month.
 
 This script tracks the value of Bitcoin. It adds new transactions to keep the
 account balance equal to the latest value. There is one tag you can set in the
-account notes, BTC:X, where X is the number of Bitcoin you own, eg `BTC:0.01`
+account notes, BTC:X, where X is the number of Bitcoin you own, e.g. `BTC:0.01`
 You can optionally change the API endpoint used to retrieve the Bitcoin price,
 an example for retrieving the price in GBP is:
 

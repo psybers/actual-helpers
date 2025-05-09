@@ -1,0 +1,7 @@
+services:
+  actual-helpers:
+    container_name: actual-helpers
+    image: ghcr.io/psybers/actual-helpers:latest
+    env_file: .env
+    volumes:
+      - ./cache:/usr/src/app/cache

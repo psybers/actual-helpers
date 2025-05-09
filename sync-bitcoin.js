@@ -1,4 +1,4 @@
-const { closeBudget, openBudget, getTransactions, getAccountNote, getAccountBalance, ensurePayee } = require('./utils');
+const { closeBudget, openBudget, getTransactions, getAccountNote, getAccountBalance, getTagValue, ensurePayee } = require('./utils');
 const api = require('@actual-app/api');
 
 function getValueAtPath(obj, path) {
@@ -48,14 +48,16 @@ async function getBitcoinPrice() {
     if (account.closed) {
       continue;
     }
-    const note = await getAccountNote(account);
-    if (!note || note.indexOf("BTC:") === -1) {
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() + 1);
+    const note = await getAccountNote(account, cutoffDate);
+    const btc_amount = parseFloat(getTagValue(note, 'BTC', 0.0));
+    if (!btc_amount) {
       continue;
     }
-    const btc_amount = note.split('BTC:')[1].split(' ')[0];
     const currentBalance = await getAccountBalance(account);
     const targetBalance = Math.round(bitcoinPrice * btc_amount * 100);
-    const diff = currentBalance - targetBalance;
+    const diff = targetBalance - currentBalance;
     if (diff != 0) {
       await api.importTransactions(account.id, [{
         date: new Date(),
