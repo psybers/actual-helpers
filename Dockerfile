@@ -1,5 +1,5 @@
 # Use an official Node.js runtime as a parent image
-FROM node:22
+FROM node:22-alpine
 
 RUN apt-get update -qq -y && \
     apt-get install -y \
