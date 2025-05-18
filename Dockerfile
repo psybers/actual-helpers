@@ -1,23 +1,19 @@
-# Use an official Node.js runtime as a parent image
+# Use Node.js Alpine image as a parent image
 FROM node:22-alpine
 
-RUN apt-get update -qq -y && \
-    apt-get install -y \
-        libasound2 \
-        libatk-bridge2.0-0 \
-        libgtk-4-1 \
-        libnss3 \
-        xdg-utils \
-        wget && \
-    wget -q -O chrome-linux64.zip https://storage.googleapis.com/chrome-for-testing-public/131.0.6778.204/linux64/chrome-linux64.zip && \
-    unzip chrome-linux64.zip && \
-    rm chrome-linux64.zip && \
-    mv chrome-linux64 /opt/chrome/ && \
-    ln -s /opt/chrome/chrome /usr/local/bin/ && \
-    wget -q -O chromedriver-linux64.zip https://storage.googleapis.com/chrome-for-testing-public/131.0.6778.204/linux64/chromedriver-linux64.zip && \
-    unzip -j chromedriver-linux64.zip chromedriver-linux64/chromedriver && \
-    rm chromedriver-linux64.zip && \
-    mv chromedriver /usr/local/bin/
+# Install dependencies required for Chrome and Chrome WebDriver
+RUN apk add --no-cache \
+    chromium \
+    chromium-chromedriver \
+    alsa-lib \
+    at-spi2-atk \
+    gtk+3.0 \
+    nss \
+    xdg-utils \
+    wget \
+    unzip \
+    libstdc++ \
+    harfbuzz
 
 # Don't run as root
 USER node
@@ -37,8 +33,12 @@ ENV ACTUAL_SYNC_ID=""
 # allow self-signed SSL certs
 ENV NODE_TLS_REJECT_UNAUTHORIZED=0
 
+# Use system chromium instead of downloading Chrome
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 # needed for Selenium+chromedriver
 ENV CHROMEDRIVER_SKIP_DOWNLOAD=true
+ENV CHROME_BIN=/usr/bin/chromium-browser
 
 # optional, for encrypted files
 ENV ACTUAL_FILE_PASSWORD=""
