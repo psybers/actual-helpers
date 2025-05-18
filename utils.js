@@ -1,5 +1,5 @@
 const api = require('@actual-app/api');
-require("dotenv").config();
+require('dotenv').config({override: true})
 
 const Utils = {
   openBudget: async function () {
