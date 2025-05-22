@@ -1,32 +1,25 @@
 # Use an official Node.js runtime as a parent image
-FROM node:22
+FROM node:22-alpine
 
-RUN apt-get update -qq -y && \
-    apt-get install -y \
-        libasound2 \
-        libatk-bridge2.0-0 \
-        libgtk-4-1 \
-        libnss3 \
+RUN apk add --no-cache \
+        alsa-lib \
+        at-spi2-atk \
+        gtk+3.0 \
+        nss \
         xdg-utils \
-        wget && \
-    wget -q -O chrome-linux64.zip https://storage.googleapis.com/chrome-for-testing-public/131.0.6778.204/linux64/chrome-linux64.zip && \
-    unzip chrome-linux64.zip && \
-    rm chrome-linux64.zip && \
-    mv chrome-linux64 /opt/chrome/ && \
-    ln -s /opt/chrome/chrome /usr/local/bin/ && \
-    wget -q -O chromedriver-linux64.zip https://storage.googleapis.com/chrome-for-testing-public/131.0.6778.204/linux64/chromedriver-linux64.zip && \
-    unzip -j chromedriver-linux64.zip chromedriver-linux64/chromedriver && \
-    rm chromedriver-linux64.zip && \
-    mv chromedriver /usr/local/bin/
-
-# Don't run as root
-USER node
+        wget \
+        unzip \
+        chromium \
+        chromium-chromedriver
 
 # Set the working directory in the container
 WORKDIR /usr/src/app
 
-# Create the cache directory
-RUN mkdir -p ./cache && chown node:node ./cache
+# Create the cache directory and set ownership (as root)
+RUN mkdir -p ./cache && chown -R node:node ./cache
+
+# Don't run as root
+USER node
 
 # Define environment variables
 ENV NODE_ENV=production
@@ -67,9 +60,11 @@ ENV BITCOIN_PAYEE_NAME="Bitcoin Price Change"
 VOLUME ./cache
 
 # Copy the current directory contents into the container at /usr/src/app
+# This should happen after WORKDIR is set and USER is node
 COPY --chown=node:node . .
 
 # Install any needed packages specified in package.json
+# This should run as the node user
 RUN npm install && npm update
 
 # Run the app when the container launches
