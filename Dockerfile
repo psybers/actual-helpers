@@ -1,5 +1,5 @@
 # Use an official Node.js runtime as a parent image
-FROM node:22-alpine
+FROM node:22.16.0-alpine3.21
 
 RUN apk add --no-cache \
         alsa-lib \
