@@ -9,8 +9,8 @@ RUN apk add --no-cache \
         xdg-utils \
         wget \
         unzip \
-        chromium \
-        chromium-chromedriver
+        chromium=136.0.7103.113-r0 \
+        chromium-chromedriver=136.0.7103.113-r0
 
 # Set the working directory in the container
 WORKDIR /usr/src/app
