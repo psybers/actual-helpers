@@ -43,7 +43,7 @@ async function getCryptoPrice(crypto, krakenPath) {
 
 (async () => {
     await openBudget();
-    const payeeId = await ensurePayee(process.env.BITCOIN_PAYEE_NAME || 'Bitcoin Price Change');
+    const payeeId = await ensurePayee(process.env.CRYPTO_PAYEE_NAME || 'Crypto Price Change');
     const accounts = await api.getAccounts();
     for (const account of accounts) {
         if (account.closed) {
