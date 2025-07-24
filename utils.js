@@ -70,6 +70,7 @@ const Utils = {
         cutoffDate = new Date();
         cutoffDate.setDate(cutoffDate.getDate() + 1);
     }
+    console.log(`cutoff date: ${cutoffDate}`);
     const filters = {
       'account': account.id,
       'date': { $lt: cutoffDate },
@@ -77,6 +78,7 @@ const Utils = {
     if (!inbound) {
       filters['amount'] = { $gt: 0 };
     }
+    console.log(filters);	  
     const data = await api.runQuery(
       api.q('transactions')
         .filter(filters)
@@ -88,6 +90,7 @@ const Utils = {
     if (!data.data.length) {
       return undefined;
     }
+    console.log(data);
     return data.data[0].date;
   },
 
