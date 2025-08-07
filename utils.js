@@ -76,7 +76,7 @@ const Utils = {
     };
     if (!inbound) {
       filters['amount'] = { $gt: 0 };
-    }	  
+    }
     const data = await api.runQuery(
       api.q('transactions')
         .filter(filters)
