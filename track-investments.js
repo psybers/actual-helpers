@@ -58,6 +58,7 @@ const getSimplefinBalances = async () => {
     accounts.forEach(a => balances[a.id] = parseFloat(a.balance));
     return balances;
   } catch (e) {
+    console.log(e);
     return undefined;
   }
 };
@@ -80,6 +81,12 @@ const zeroTransaction = async (payment) => {
   const payeeId = await ensurePayee(process.env.INVESTMENT_PAYEE_NAME || 'Investment');
   const categoryGroupId = await ensureCategoryGroup(process.env.INVESTMENT_CATEGORY_GROUP_NAME || 'Income');
   const categoryId = await ensureCategory(process.env.INVESTMENT_CATEGORY_NAME || 'Investment', categoryGroupId, true);
+
+  let noteTag = process.env.INVESTMENT_NOTE_TAG || '';
+  if (noteTag) {
+    console.log(`Note Tag: ${noteTag}`);
+    noteTag = '#' + noteTag.trim() + ' ';
+  }
 
   const simplefinBalances = await getSimplefinBalances();
   if (simplefinBalances) {
@@ -131,7 +138,7 @@ const zeroTransaction = async (payment) => {
               cleared: true,
               reconciled: true,
               category: categoryId,
-              notes: `Update investment balance to ${simplefinBalance / 100}`,
+              notes: `${noteTag ? noteTag : ''}Update investment balance to ${simplefinBalance / 100}`,
             }]);
           }
         }
