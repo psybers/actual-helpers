@@ -72,6 +72,23 @@ RENTCAST_API_KEY="<Rentcast API key>"
 RENTCAST_PAYEE_NAME="RentCast"
 ```
 
+### OIDC Auth Provider Support
+
+When using OIDC, in your Actual Budget server config you must be able to log in
+with a password.
+
+Set the following in your **server config** (not in your helpers config!), then
+on initial login you must set a password:
+
+```
+ACTUAL_OPENID_AUTH_METHOD=openid
+ACTUAL_LOGIN_METHOD=openid
+ACTUAL_ALLOWED_LOGIN_METHODS=openid,password,header
+ACTUAL_OPENID_ENFORCE=false
+```
+
+Then configure the helpers for password login, as shown above.
+
 ## Installation
 
 Run `npm install` to install any required dependencies.
