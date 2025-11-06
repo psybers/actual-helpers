@@ -6,11 +6,7 @@ require("dotenv").config();
 
 
 const getCredentials = async () => {
-  if (process.env.SIMPLEFIN_CREDENTIALS) {
-    return process.env.SIMPLEFIN_CREDENTIALS;
-  }
-
-  const token = readline.question('Enter your SimpleFIN setup token: ');
+  const token = process.env.SIMPLEFIN_CREDENTIALS ? process.env.SIMPLEFIN_CREDENTIALS : readline.question('Enter your SimpleFIN setup token: ');
   const url = atob(token.trim());
 
   const response = await fetch(url, { method: 'post' });
