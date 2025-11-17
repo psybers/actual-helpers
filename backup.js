@@ -2,14 +2,18 @@
 // Useful for running bank syncs on a daily/weekly schedule
 const { closeBudget, openBudget, exportBudget } = require('./utils');
 const api = require('@actual-app/api');
+const fs = require('fs');
+const archiver = require('archiver');
+const path = require("node:path");
 
 (async () => {
+  const cache = process.env.ACTUAL_CACHE_DIR || './cache';
+  const backup = process.env.ACTUAL_BACKUP_DIR || './backup';
+  
   await openBudget();
   await closeBudget();
   console.log("backing up...");
   try{
-    const cache = process.env.ACTUAL_CACHE_DIR || './cache';
-    const backup = process.env.ACTUAL_BACKUP_DIR || './app';
     const directory = await fs.readdirSync(cache);
 
     let sourceFolder = "";
