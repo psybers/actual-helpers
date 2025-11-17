@@ -407,3 +407,17 @@ node sync-bitcoin.js
 ```
 
 It is recommended to run this script once per day or week.
+
+### Backup
+
+This script zips the downloaded budget and saves it in the same format as the gui would.
+This does require that the ./app folder be available, if running in docker set your volume with
+
+```
+-v ./app:/path/to/your/backup/folder
+```
+
+This does not move the backups off the device, other scripts or systems must be used to move these backups
+into more secure locations.
+
+These backups can be restored into actual using the "Import from File" option.
