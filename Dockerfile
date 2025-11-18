@@ -51,7 +51,7 @@ ENV INTEREST_PAYEE_NAME="Loan Interest"
 
 # optional, name of the payee for added interest transactions
 ENV INVESTMENT_PAYEE_NAME="Investment"
-# optional, name of the cateogry group for added investment tracking transactions
+# optional, name of the category group for added investment tracking transactions
 ENV INVESTMENT_CATEGORY_GROUP_NAME="Income"
 # optional, name of the category for added investment tracking transactions
 ENV INVESTMENT_CATEGORY_NAME="Investment"
@@ -59,10 +59,20 @@ ENV INVESTMENT_CATEGORY_NAME="Investment"
 # optional, for logging into SimpleFIN
 ENV SIMPLEFIN_CREDENTIALS=""
 
+# optional, name of the payee for Zestimate entries
+ENV ZESTIMATE_PAYEE_NAME="Zestimate"
+
+# optional, name of the payee for KBB entries
+ENV KBB_PAYEE_NAME="KBB"
+
 # optional, for retrieving Bitcoin Price (these default to Kraken USD)
 ENV BITCOIN_PRICE_URL="https://api.kraken.com/0/public/Ticker?pair=xbtusd"
 ENV BITCOIN_PRICE_JSON_PATH="result.XXBTZUSD.c[0]"
 ENV BITCOIN_PAYEE_NAME="Bitcoin Price Change"
+
+#optional, RentCast API key for fetching property data
+ENV RENTCAST_API_KEY=""
+ENV RENTCAST_PAYEE_NAME="RentCast"
 
 VOLUME ./cache
 
