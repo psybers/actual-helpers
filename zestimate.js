@@ -1,39 +1,45 @@
-const { Builder, Browser, By, until } = require('selenium-webdriver')
+const puppeteer = require('puppeteer-extra');
+const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 const api = require('@actual-app/api');
 const { closeBudget, ensurePayee, getAccountBalance, getAccountNote, getTagValue, openBudget, showPercent, sleep } = require('./utils');
 require("dotenv").config();
 
+puppeteer.use(StealthPlugin());
+
 async function getZestimate(URL) {
-    let driver = await new Builder()
-        .forBrowser(Browser.CHROME)
-        .build();
+  const browser = await puppeteer.launch({
+    headless: 'new',
+    args: ['--no-sandbox', '--disable-setuid-sandbox']
+  });
+
+  const page = await browser.newPage();
+
+  try {
+    await page.goto(URL, { waitUntil: 'domcontentloaded', timeout: 20000 });
+    const html = await page.content();
 
     try {
-      await driver.get(URL);
-      const html = await driver.wait(until.elementLocated(By.css('body')), 5000).getAttribute('innerHTML');
-
-      try {
-        let match = html.match(/"zestimate":"(\d+)"/);
-        if (match) {
-          return parseInt(match[1]) * 100;
-        }
-        match = html.match(/\\"zestimate\\":\\"(\d+)\\"/);
-        if (match) {
-          return parseInt(match[1]) * 100;
-        }
-      } catch (error) {
-        console.log('Error parsing Zillow page:');
-        console.log(error);
-        console.log(html);
+      let match = html.match(/"zestimate":"(\d+)"/);
+      if (match) {
+        return parseInt(match[1]) * 100;
       }
-    } finally {
-      await driver.quit();
+      match = html.match(/\\"zestimate\\":\\"(\d+)\\"/);
+      if (match) {
+        return parseInt(match[1]) * 100;
+      }
+    } catch (error) {
+      console.log('Error parsing Zillow page:');
+      console.log(error);
+      console.log(html);
     }
+  } finally {
+    await browser.close();
+  }
 
-    return undefined;
+  return undefined;
 }
 
-(async function() {
+(async function () {
   await openBudget();
 
   const payeeId = await ensurePayee(process.env.ZESTIMATE_PAYEE_NAME || 'Zestimate');
@@ -55,8 +61,8 @@ async function getZestimate(URL) {
 
       const zestimate = await getZestimate(URL);
       if (!zestimate) {
-          console.log('Was unable to get Zestimate, skipping');
-          continue;
+        console.log('Was unable to get Zestimate, skipping');
+        continue;
       }
       const balance = await getAccountBalance(account);
       const diff = (zestimate * ownership) - balance;
