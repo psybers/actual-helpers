@@ -20,7 +20,7 @@ const Utils = {
       process.exit(1);
     }
 
-    console.log("connect");
+    console.log("connect ", url);
     await api.init({ serverURL: url, password: password, dataDir: cache });
 
     console.log("open file");

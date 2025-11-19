@@ -32,44 +32,52 @@ Create a `.env` file in the root directory with the following content (or you
 can copy the `example.env` file):
 
 ```python
-ACTUAL_SERVER_URL="https://<Actual Budget server URL>"
-ACTUAL_SERVER_PASSWORD="<Actual Budget server password>"
-ACTUAL_SYNC_ID="<Actual Budget sync ID>"
+ACTUAL_SERVER_URL=https://samary.synology.me:5001
+ACTUAL_SERVER_PASSWORD=kyf9zpf4XAJ@zwx-bwf
+ACTUAL_SYNC_ID=b5c86f61-baa1-4385-a073-d4e0480c4778
+
 # allow self-signed SSL certs
-NODE_TLS_REJECT_UNAUTHORIZED=0
+NODE_TLS_REJECT_UNAUTHORIZED=1
 
 # optional, for encrypted files
-ACTUAL_FILE_PASSWORD="<file password>"
+ACTUAL_FILE_PASSWORD=<file password>
 
 # optional, if you want to use a different cache directory
-ACTUAL_CACHE_DIR="./cache"
+ACTUAL_CACHE_DIR=./cache
+
+# optional, if you want to use a different backup directory
+ACTUAL_BACKUP_DIR=./backup
+
+# optional, if you want to set the timezone to something other than UTC for the backup files. 
+# see: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+TZ=America/Vancouver
 
 # optional, name of the payee for added interest transactions
-INTEREST_PAYEE_NAME="Loan Interest"
+INTEREST_PAYEE_NAME=Loan Interest
 
 # optional, name of the payee for added interest transactions
-INVESTMENT_PAYEE_NAME="Investment"
+INVESTMENT_PAYEE_NAME=Investment
 # optional, name of the category group for added investment tracking transactions
-INVESTMENT_CATEGORY_GROUP_NAME="Income"
+INVESTMENT_CATEGORY_GROUP_NAME=Income
 # optional, name of the category for added investment tracking transactions
-INVESTMENT_CATEGORY_NAME="Investment"
+INVESTMENT_CATEGORY_NAME=Investment
 
 # optional, name of the payee for Zestimate entries
-ZESTIMATE_PAYEE_NAME="Zestimate"
+ZESTIMATE_PAYEE_NAME=Zestimate
 
 # optional, name of the payee for KBB entries
-KBB_PAYEE_NAME="KBB"
+KBB_PAYEE_NAME=KBB
 
 # optional, the URL for tracking Bitcoin prices
-BITCOIN_PRICE_URL="https://api.kraken.com/0/public/Ticker?pair=xbtusd"
+BITCOIN_PRICE_URL=https://api.kraken.com/0/public/Ticker?pair=xbtusd
 # optional, the JSON path in the response to get the Bitcoin price
-BITCOIN_PRICE_JSON_PATH="result.XXBTZUSD.c[0]"
+BITCOIN_PRICE_JSON_PATH=result.XXBTZUSD.c[0]
 # optional, name of the payee for Bitcoin entries
-BITCOIN_PAYEE_NAME="Bitcoin Price Change"
+BITCOIN_PAYEE_NAME=Bitcoin Price Change
 
 #optional, RentCast API key for fetching property data
-RENTCAST_API_KEY="<Rentcast API key>"
-RENTCAST_PAYEE_NAME="RentCast"
+RENTCAST_API_KEY=<Rentcast API key>
+RENTCAST_PAYEE_NAME=RentCast
 ```
 
 ### OIDC Auth Provider Support
@@ -447,3 +455,21 @@ node sync-crypto.js
 It is recommended to run this script once per day or week. If you are retrieving
 BTC prices using this script, DO NOT run the `sync-bitcoin.js` script as well, as it will
 set the account balance to the value of your BTC holdings only.
+
+### Backup
+
+This script zips the downloaded budget and saves it in the same format as using the `Export Budget` option in the client.
+This does require that the ./budget folder be available, if running in docker set your volume with
+
+```
+--volume /path/to/backups:./backup
+```
+
+The backups will be formated `YYYY-MM-DD_[HHMMSS]_BudgetName.zip` these should be in the local timezone, if they
+are not then the local TZ environment variable is likely failing, set the TZ env variable in your .env file. See the
+example.env for more information.
+
+This does not move the backups off the device, other scripts or systems must be used to move these backups
+into more secure locations.
+
+These backups can be restored into actual using the "Import from File" option.
