@@ -1,7 +1,11 @@
 services:
   actual-helpers:
-    container_name: actual-helpers
-    image: ghcr.io/psybers/actual-helpers:latest
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      network: host
     env_file: .env
     volumes:
       - ./cache:/usr/src/app/cache
+      - ./backup:/usr/src/app/backup
+    network_mode: host

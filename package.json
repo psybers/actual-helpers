@@ -5,6 +5,7 @@
     "dotenv": "^16.4.5",
     "jsdom": "^24.1.0",
     "readline-sync": "^1.4.10",
-    "selenium-webdriver": "^4.27.0"
+    "selenium-webdriver": "^4.27.0",
+    "archiver": "^7.0.1"
   }
 }
