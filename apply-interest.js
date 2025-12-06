@@ -45,7 +45,7 @@ function daysInYear(year) {
         cutoff.setDate(cutoff.getDate() + 1);
 
         const lastDate = await getLastTransactionDate(account, cutoff);
-        // const lastDate = await getLastTransactionDate(account, cutoff,true);
+
         if (!lastDate) continue;
         const daysPassed = Math.floor((interestTransactionDate - new Date(lastDate)) / 86400000);
 
@@ -80,7 +80,7 @@ function daysInYear(year) {
             payee: payeeId,
             amount: compoundedInterest,
             cleared: true,
-            notes: `${noteTag ? noteTag : ''}Interest for ${daysPassed} days, ${balance / 100.0} at ${interestRate} (${isDaily ? "daily" : "monthly"})`,
+            notes: `${noteTag}Interest for ${daysPassed} days, ${balance / 100.0} at ${interestRate} (${isDaily ? "daily" : "monthly"})`,
           }]);
         }
       }

@@ -138,7 +138,7 @@ const zeroTransaction = async (payment) => {
               cleared: true,
               reconciled: true,
               category: categoryId,
-              notes: `${noteTag ? noteTag : ''}Update investment balance to ${simplefinBalance / 100}`,
+              notes: `${noteTag}Update investment balance to ${simplefinBalance / 100}`,
             }]);
           }
         }

@@ -24,11 +24,31 @@ const Utils = {
     await api.init({ serverURL: url, password: password, dataDir: cache });
 
     console.log("open file");
-    if (file_password) {
-      await api.downloadBudget(sync_id, { password: file_password, });
-    } else {  
-      await api.downloadBudget(sync_id);
+
+    // --- ADDED: quick server diagnostic fetch and wrapped download with better logging ---
+    try {
+      try {
+        const testUrl = url.endsWith('/') ? url : url + '/';
+        const resp = await fetch(testUrl, { method: 'GET' });
+        console.log(`Server diagnostic: ${testUrl} -> status ${resp.status}`);
+        const text = await resp.text();
+        console.log('Server diagnostic body (truncated 1000 chars):', text.slice(0, 1000));
+      } catch (fetchErr) {
+        console.error('Server diagnostic fetch failed:', fetchErr);
+      }
+
+      if (file_password) {
+        await api.downloadBudget(sync_id, { password: file_password, });
+      } else {
+        await api.downloadBudget(sync_id);
+      }
+    } catch (err) {
+      console.error('Error while downloading budget:');
+      console.error(err && err.stack ? err.stack : err);
+      // Re-throw so existing callers still get the error behavior
+      throw err;
     }
+    // --- END ADDED ---
   },
 
   closeBudget: async function () {
