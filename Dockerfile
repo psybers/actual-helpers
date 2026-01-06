@@ -49,7 +49,7 @@ ENV ACTUAL_CACHE_DIR="./cache"
 # optional, name of the payee for added interest transactions
 ENV INTEREST_PAYEE_NAME="Loan Interest"
 
-# optional, name of the payee for added interest transactions
+# optional, name of the payee for added investment transactions
 ENV INVESTMENT_PAYEE_NAME="Investment"
 # optional, name of the category group for added investment tracking transactions
 ENV INVESTMENT_CATEGORY_GROUP_NAME="Income"
