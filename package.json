@@ -4,6 +4,9 @@
     "chromedriver": "^131.0.4",
     "dotenv": "^16.4.5",
     "jsdom": "^24.1.0",
+    "puppeteer": "^24.10.1",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
     "readline-sync": "^1.4.10",
     "selenium-webdriver": "^4.27.0"
   }
