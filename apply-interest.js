@@ -11,6 +11,11 @@ function daysInYear(year) {
   await openBudget();
 
   const payeeId = await ensurePayee(process.env.INTEREST_PAYEE_NAME || 'Loan Interest');
+  let noteTag = process.env.INTEREST_NOTE_TAG || '';
+  if (noteTag) {
+    console.log(`Note Tag: ${noteTag}`);
+    noteTag = '#' + noteTag.trim() + ' ';
+  }
 
   const accounts = await api.getAccounts();
   for (const account of accounts) {
@@ -40,6 +45,7 @@ function daysInYear(year) {
         cutoff.setDate(cutoff.getDate() + 1);
 
         const lastDate = await getLastTransactionDate(account, cutoff);
+
         if (!lastDate) continue;
         const daysPassed = Math.floor((interestTransactionDate - new Date(lastDate)) / 86400000);
 
@@ -74,7 +80,7 @@ function daysInYear(year) {
             payee: payeeId,
             amount: compoundedInterest,
             cleared: true,
-            notes: `Interest for ${daysPassed} days, ${balance / 100.0} at ${interestRate} (${isDaily ? "daily" : "monthly"})`,
+            notes: `${noteTag}Interest for ${daysPassed} days, ${balance / 100.0} at ${interestRate} (${isDaily ? "daily" : "monthly"})`,
           }]);
         }
       }
