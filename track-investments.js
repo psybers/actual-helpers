@@ -16,16 +16,21 @@ const getCredentials = async () => {
   const response = await fetch(url, { method: 'post' });
   const api_url = await response.text();
 
-  const rest = api_url.split('//', 2)[1];
-  const auth = rest.split('@', 1)[0];
-  const username = auth.split(':')[0];
-  const pw = auth.split(':')[1];
+  try {
+    const rest = api_url.split('//', 2)[1];
+    const auth = rest.split('@', 1)[0];
+    const username = auth.split(':')[0];
+    const pw = auth.split(':')[1];
 
-  const data = `${username}:${pw}`;
-  const cache = process.env.ACTUAL_CACHE_DIR || './cache';
-  fs.writeFileSync(cache + '/simplefin.credentials', data);
-  console.log('SimpleFIN credentials:', data);
-  return data;
+    const data = `${username}:${pw}`;
+    const cache = process.env.ACTUAL_CACHE_DIR || './cache';
+    fs.writeFileSync(cache + '/simplefin.credentials', data);
+    console.log('SimpleFIN credentials:', data);
+    return data;
+  } catch (err) {
+    console.log('Invalid SimpleFIN setup response:', api_url);
+    return undefined;
+  }
 };
 
 const loadCredentials = () => {
@@ -41,6 +46,9 @@ const getSimplefinBalances = async () => {
   let credentials = loadCredentials();
   if (!credentials) {
     credentials = await getCredentials();
+    if (!credentials) {
+      return undefined;
+    }
   }
   const username = credentials.split(':')[0];
   const pw = credentials.split(':')[1];
