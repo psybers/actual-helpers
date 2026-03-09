@@ -1,6 +1,6 @@
 const api = require('@actual-app/api');
 const jsdom = require("jsdom");
-const { closeBudget, ensurePayee, getAccountBalance, getAccountNote, getLastTransactionDate, getTagValue, openBudget, setAccountNote, sleep } = require('./utils');
+const { forEachBudget, ensurePayee, getAccountBalance, getAccountNote, getLastTransactionDate, getTagValue, setAccountNote, sleep } = require('./utils');
 require("dotenv").config();
 
 async function getKBB(URL) {
@@ -30,9 +30,8 @@ async function getKBB(URL) {
 }
 
 (async function() {
-  await openBudget();
-
-  const payeeId = await ensurePayee(process.env.KBB_PAYEE_NAME || 'KBB');
+  await forEachBudget(async () => {
+    const payeeId = await ensurePayee(process.env.KBB_PAYEE_NAME || 'KBB');
 
   const accounts = await api.getAccounts();
   for (const account of accounts) {
@@ -108,6 +107,5 @@ async function getKBB(URL) {
       }
     }
   }
-
-  await closeBudget();
+  });
 })();

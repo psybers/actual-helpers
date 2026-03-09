@@ -1,5 +1,5 @@
 const api = require('@actual-app/api');
-const { closeBudget, ensurePayee, getAccountBalance, getAccountNote, getLastTransactionDate, getTagValue, openBudget, showPercent } = require('./utils');
+const { forEachBudget, ensurePayee, getAccountBalance, getAccountNote, getLastTransactionDate, getTagValue, showPercent } = require('./utils');
 require("dotenv").config();
 
 function daysInYear(year) {
@@ -8,9 +8,8 @@ function daysInYear(year) {
 }
 
 (async () => {
-  await openBudget();
-
-  const payeeId = await ensurePayee(process.env.INTEREST_PAYEE_NAME || 'Loan Interest');
+  await forEachBudget(async () => {
+    const payeeId = await ensurePayee(process.env.INTEREST_PAYEE_NAME || 'Loan Interest');
 
   const accounts = await api.getAccounts();
   for (const account of accounts) {
@@ -79,7 +78,5 @@ function daysInYear(year) {
         }
       }
     }
-  }
-
-  await closeBudget();
+  });
 })();

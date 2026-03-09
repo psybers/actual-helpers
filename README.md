@@ -34,7 +34,7 @@ can copy the `example.env` file):
 ```python
 ACTUAL_SERVER_URL="https://<Actual Budget server URL>"
 ACTUAL_SERVER_PASSWORD="<Actual Budget server password>"
-ACTUAL_SYNC_ID="<Actual Budget sync ID>"
+ACTUAL_SYNC_ID="<Actual Budget sync ID (Comma seperated for multiple)>"
 # allow self-signed SSL certs
 NODE_TLS_REJECT_UNAUTHORIZED=0
 
