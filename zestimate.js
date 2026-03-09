@@ -1,6 +1,6 @@
 const { Builder, Browser, By, until } = require('selenium-webdriver')
 const api = require('@actual-app/api');
-const { closeBudget, ensurePayee, getAccountBalance, getAccountNote, getTagValue, openBudget, showPercent, sleep } = require('./utils');
+const { forEachBudget, ensurePayee, getAccountBalance, getAccountNote, getTagValue, showPercent, sleep } = require('./utils');
 require("dotenv").config();
 
 async function getZestimate(URL) {
@@ -42,52 +42,50 @@ async function getZestimate(URL) {
 }
 
 (async function() {
-  await openBudget();
+  await forEachBudget(async () => {
+    const payeeId = await ensurePayee(process.env.ZESTIMATE_PAYEE_NAME || 'Zestimate');
 
-  const payeeId = await ensurePayee(process.env.ZESTIMATE_PAYEE_NAME || 'Zestimate');
+    const accounts = await api.getAccounts();
+    for (const account of accounts) {
+      const note = await getAccountNote(account);
 
-  const accounts = await api.getAccounts();
-  for (const account of accounts) {
-    const note = await getAccountNote(account);
+      if (note && note.indexOf('zestimate:') > -1) {
+        const URL = getTagValue(note, 'zestimate');
 
-    if (note && note.indexOf('zestimate:') > -1) {
-      const URL = getTagValue(note, 'zestimate');
+        let ownership = 1;
+        if (note.indexOf('ownership:') > -1) {
+          ownership = parseFloat(getTagValue(note, 'ownership'));
+        }
 
-      let ownership = 1;
-      if (note.indexOf('ownership:') > -1) {
-        ownership = parseFloat(getTagValue(note, 'ownership'));
+        console.log('Fetching zestimate for account:', account.name);
+        console.log('Zillow URL:', URL);
+
+        const zestimate = await getZestimate(URL);
+        if (!zestimate) {
+            console.log('Was unable to get Zestimate, skipping');
+            continue;
+        }
+        const balance = await getAccountBalance(account);
+        const diff = (zestimate * ownership) - balance;
+
+        console.log('Zestimate:', zestimate);
+        console.log('Ownership:', zestimate * ownership);
+        console.log('Balance:', balance);
+        console.log('Difference:', diff);
+
+        if (diff != 0) {
+          await api.importTransactions(account.id, [{
+            date: new Date(),
+            payee: payeeId,
+            amount: diff,
+            cleared: true,
+            reconciled: true,
+            notes: `Update Zestimate to ${zestimate * ownership / 100} (${zestimate / 100}*${showPercent(ownership)})`,
+          }]);
+        }
+
+        await sleep(1324);
       }
-
-      console.log('Fetching zestimate for account:', account.name);
-      console.log('Zillow URL:', URL);
-
-      const zestimate = await getZestimate(URL);
-      if (!zestimate) {
-          console.log('Was unable to get Zestimate, skipping');
-          continue;
-      }
-      const balance = await getAccountBalance(account);
-      const diff = (zestimate * ownership) - balance;
-
-      console.log('Zestimate:', zestimate);
-      console.log('Ownership:', zestimate * ownership);
-      console.log('Balance:', balance);
-      console.log('Difference:', diff);
-
-      if (diff != 0) {
-        await api.importTransactions(account.id, [{
-          date: new Date(),
-          payee: payeeId,
-          amount: diff,
-          cleared: true,
-          reconciled: true,
-          notes: `Update Zestimate to ${zestimate * ownership / 100} (${zestimate / 100}*${showPercent(ownership)})`,
-        }]);
-      }
-
-      await sleep(1324);
     }
-  }
-
-  await closeBudget();
+  });
 })();

@@ -2,7 +2,11 @@ const api = require('@actual-app/api');
 require("dotenv").config();
 
 const Utils = {
-  openBudget: async function () {
+  getSyncIds: function () {
+    return (process.env.ACTUAL_SYNC_ID || '').split(',').map(id => id.trim()).filter(Boolean);
+  },
+
+  openBudget: async function (syncId) {
     process.on('unhandledRejection', (reason, p) => {
       console.error('Unhandled Rejection at: Promise', p, 'reason:', reason);
       console.error(reason.stack);
@@ -12,7 +16,7 @@ const Utils = {
     const url = process.env.ACTUAL_SERVER_URL || '';
     const password = process.env.ACTUAL_SERVER_PASSWORD || '';
     const file_password = process.env.ACTUAL_FILE_PASSWORD || '';
-    const sync_id = process.env.ACTUAL_SYNC_ID || '';
+    const sync_id = syncId || Utils.getSyncIds()[0] || '';
     const cache = process.env.ACTUAL_CACHE_DIR || './cache';
 
     if (!url || !password || !sync_id) {
@@ -28,6 +32,19 @@ const Utils = {
       await api.downloadBudget(sync_id, { password: file_password, });
     } else {  
       await api.downloadBudget(sync_id);
+    }
+  },
+
+  forEachBudget: async function (callback) {
+    const syncIds = Utils.getSyncIds();
+    if (syncIds.length === 0) {
+      console.error('Required settings for Actual not provided.');
+      process.exit(1);
+    }
+    for (const syncId of syncIds) {
+      await Utils.openBudget(syncId);
+      await callback();
+      await Utils.closeBudget();
     }
   },
 
