@@ -1,3 +1,9 @@
+// Polyfill navigator for Node.js — @actual-app/api's bundle references
+// navigator.platform which only exists in the browser.
+if (typeof globalThis.navigator === 'undefined') {
+  globalThis.navigator = { platform: '', userAgent: '' };
+}
+
 const api = require('@actual-app/api');
 require("dotenv").config();
 
@@ -5,8 +11,10 @@ const Utils = {
   openBudget: async function () {
     process.on('unhandledRejection', (reason, p) => {
       console.error('Unhandled Rejection at: Promise', p, 'reason:', reason);
-      console.error(reason.stack);
-      process.exit(1);
+      if (reason && reason.stack) {
+        console.error(reason.stack);
+      }
+      // Don't exit — let the calling script handle errors gracefully
     });
 
     const url = process.env.ACTUAL_SERVER_URL || '';
