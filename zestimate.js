@@ -1,16 +1,22 @@
-const { Builder, Browser, By, until } = require('selenium-webdriver')
+const puppeteer = require('puppeteer-extra');
+const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 const api = require('@actual-app/api');
 const { closeBudget, ensurePayee, getAccountBalance, getAccountNote, getTagValue, openBudget, showPercent, sleep } = require('./utils');
 require("dotenv").config();
 
+puppeteer.use(StealthPlugin());
+
 async function getZestimate(URL) {
-    let driver = await new Builder()
-        .forBrowser(Browser.CHROME)
-        .build();
+    const browser = await puppeteer.launch({
+      headless: 'new',
+      args: ['--no-sandbox', '--disable-setuid-sandbox']
+    });
+
+    const page = await browser.newPage();
 
     try {
-      await driver.get(URL);
-      const html = await driver.wait(until.elementLocated(By.css('body')), 5000).getAttribute('innerHTML');
+      await page.goto(URL, { waitUntil: 'domcontentloaded', timeout: 20000 });
+      const html = await page.content();
 
       try {
         let match = html.match(/"price":(\d+)/);
@@ -35,7 +41,7 @@ async function getZestimate(URL) {
         console.log(html);
       }
     } finally {
-      await driver.quit();
+      await browser.close();
     }
 
     return undefined;
