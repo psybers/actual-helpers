@@ -13,6 +13,7 @@ This is a collection of useful scripts to help you manage your Actual Budget.
     - [Tracking Home Prices (RentCast's Value Estimate)](#tracking-home-prices-rentcasts-value-estimate)
     - [Tracking Home Prices (Zillow's Zestimate)](#tracking-home-prices-zillows-zestimate)
     - [Tracking Vehicle Prices (Kelley Blue Book)](#tracking-vehicle-prices-kelley-blue-book)
+    - [Tracking Vehicle Values (MarketCheck's Price Estimate)](#tracking-vehicle-values-marketchecks-price-estimate)
     - [Tracking Investment Accounts](#tracking-investment-accounts)
     - [Tracking Bitcoin Price](#tracking-bitcoin-price)
 
@@ -59,6 +60,11 @@ ZESTIMATE_PAYEE_NAME="Zestimate"
 
 # optional, name of the payee for KBB entries
 KBB_PAYEE_NAME="KBB"
+
+# optional, API Key for fetching MarketCheck vehicle value estimates
+MARKETCHECK_API_KEY="<MarketCheck API Key>"
+# optional, name of the payee for MarketCheck Price Estimate
+MARKETCHEC_PAYEE_NAME="MarketCheck"
 
 # optional, the URL for tracking Bitcoin prices
 BITCOIN_PRICE_URL="https://api.kraken.com/0/public/Ticker?pair=xbtusd"
@@ -284,7 +290,7 @@ It is recommended to run this script once per month.
 This script tracks the Kelley Blue Book value for a car or motorcycle.  It adds
 new transactions to keep the account balance equal to the latest KBB value.
 
-To use this script, first you need to use the KBB website to find the value of
+TTo use this script, first you need to use the KBB website to find the value of
 your car.  Be sure to select "Private Party" for the value.  It should show
 something like this:
 
@@ -323,6 +329,38 @@ To run:
 
 ```console
 node kbb.js
+```
+
+It is recommended to run this script once per month.  Note that you will have
+to periodically update the mileage in the account note.
+
+### Tracking Vehicle Values (MarketCheck's Price Estimate)
+
+This script tracks the MarketCheck retail and trade-in value for a vehicle. It adds new transactions to keep the account balance equal to the latest value. MarketCheck values differ from standard Kelley Blue Book estimates since they are pulled from real-time local dealership and private-party listing comps, making them highly accurate for current market conditions.
+
+To use this script, you need to create an asset account in Actual Budget and set the account note to populate the fields that MarketCheck needs to query the marketcheck_price endpoint: `vin`, `zip`, and `miles`.
+
+`vin` needs to be the standard 17-character Vehicle Identification Number. Supply the correct zip code and current mileage for a more accurate local market estimate.
+
+Example note for a vehicle garaged in the 12345 area with roughly 32,000 miles:
+```Plaintext
+marketcheckvin:XXXXXXXXXXXXXXXXX
+marketcheckzip:12345
+miles:32000
+``` 
+
+Optionally, you can also specify a trade-in margin with `marketcheckmargin` if you want your budget to reflect a conservative liquidation value (what a dealer would pay you) rather than full retail value. You do this by adding a "marketcheckmargin:0.8" tag to the account note. For example, if you want to calculate 85% of the retail price to account for dealership overhead and reconditioning, add "marketcheckmargin:0.85 to the account note. The script will then multiply the MarketCheck retail price by that percentage to track the vehicle's trade-in value.
+
+You can also optionally specify a different `marketcheckdealertype`.  `marketcheckdealertype` defaults to "franchise" for a wider review of comps and therefore a more accurate estimate.  Other options can be found at https://docs.marketcheck.com/docs/api/cars/market-insights/marketcheck-price#base-path
+
+You will need to create an account on MarketCheck's developer portal and set up a Developer tier plan. They offer up to 500 API calls per month for free, which easily covers a monthly sync. Copy your API key into the `MARKETCHECK_API_KEY` setting in the .env file.
+
+You can optionally change the payee used for the transactions by setting `MARKETCHECK_PAYEE_NAME` in the .env file.
+
+To run:
+
+```console
+node marketcheck.js
 ```
 
 It is recommended to run this script once per month.  Note that you will have

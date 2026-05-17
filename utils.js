@@ -46,7 +46,7 @@ const Utils = {
       api.q('transactions')
       .filter({
         'account': account.id,
-        'date': { $lt: cutoffDate },
+        'date': { $lte: cutoffDate },
       })
       .calculate({ $sum: '$amount' })
       .options({ splits: 'grouped' })
