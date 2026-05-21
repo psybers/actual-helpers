@@ -185,7 +185,9 @@ interest transaction on the 28th of the month, set the account note to
 By default, interest is calculated using the 30/360 method where interest is
 computed monthly using 30/360 (or 1/12) of the interest rate.  If you need to
 compute interest using the ACTUAL/ACTUAL method, set `interest:actual` in the
-note.  If you need to compute interest daily, set `interest:daily`.
+note.  If you need to compute interest daily, set `interest:daily`.  For most
+student loans, you probably want simple dailiy interest
+`interest:daily-simple`.
 
 You can optionally change the payee used for the interest transactions by
 setting `INTEREST_PAYEE_NAME` in the `.env` file.

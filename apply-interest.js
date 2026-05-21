@@ -49,6 +49,7 @@ function daysInYear(year) {
         let numPeriods = 1
         switch (kind) {
           case 'daily':
+          case 'daily-simple':
             period = daysInYear(interestTransactionDate.getFullYear());
             numPeriods = daysPassed;
             break;
@@ -60,7 +61,12 @@ function daysInYear(year) {
         }
 
         const balance = await getAccountBalance(account, interestTransactionDate);
-        const compoundedInterest = Math.round(balance * (Math.pow(1 + interestRate / period, numPeriods) - 1));
+
+        let compoundedInterest;
+        if (kind == 'daily-simple')
+            compoundedInterest = Math.round(balance * (interestRate / 365) * numPeriods);
+        else
+            compoundedInterest = Math.round(balance * (Math.pow(1 + interestRate / period, numPeriods) - 1));
 
         interestRate = showPercent(interestRate);
 
