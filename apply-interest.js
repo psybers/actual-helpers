@@ -41,7 +41,9 @@ function daysInYear(year) {
 
         const lastDate = await getLastTransactionDate(account, cutoff);
         if (!lastDate) continue;
-        const daysPassed = Math.floor((interestTransactionDate - new Date(lastDate)) / 86400000);
+        const daysPassed = Math.round(
+          (interestTransactionDate.setHours(0, 0, 0, 0) - new Date(lastDate).setHours(0, 0, 0, 0)) / 86400000
+        );
 
         let period = 12;
         let numPeriods = 1
