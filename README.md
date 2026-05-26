@@ -15,6 +15,8 @@ This is a collection of useful scripts to help you manage your Actual Budget.
     - [Tracking Vehicle Prices (Kelley Blue Book)](#tracking-vehicle-prices-kelley-blue-book)
     - [Tracking Investment Accounts](#tracking-investment-accounts)
     - [Tracking Bitcoin Price](#tracking-bitcoin-price)
+    - [Tracking Crypto Prices](#tracking-crypto-prices)
+    - [Tracking Precious Metals (Gold & Silver)](#tracking-precious-metals-gold--silver)
 
 ## Requirements
 
@@ -449,3 +451,47 @@ node sync-crypto.js
 It is recommended to run this script once per day or week. If you are retrieving
 BTC prices using this script, DO NOT run the `sync-bitcoin.js` script as well, as it will
 set the account balance to the value of your BTC holdings only.
+
+### Tracking Precious Metals (Gold & Silver)
+
+This script tracks the value of physical gold and silver holdings. Similar to
+the Bitcoin and Crypto scripts, it adds new transactions to keep the account
+balance equal to the latest market value.
+
+To use, set one or both of these tags in the account notes, where the value is
+the quantity in **troy ounces** that you own:
+
+- `GOLD:X` - troy ounces of gold (e.g. `GOLD:2.5`)
+- `SILVER:X` - troy ounces of silver (e.g. `SILVER:50`)
+
+Both tags may be set on the same account; the script will sum their values into
+a single correcting transaction. Accounts without either tag are skipped.
+
+For example, an account holding 1 oz of gold and 100 oz of silver would have
+this account note:
+
+```
+GOLD:1
+SILVER:100
+```
+
+Spot prices are retrieved from [gold-api.com](https://gold-api.com/) by default
+(USD per troy ounce, no API key required). To use a different price source,
+override the URL and JSON path per metal in your `.env` file. For example, to
+fetch gold in GBP from an alternate provider:
+
+```shell
+GOLD_PRICE_URL="https://example.com/api/gold/gbp"
+GOLD_PRICE_JSON_PATH="data.price"
+```
+
+You can optionally change the payee used for the transactions by setting
+`METALS_PAYEE_NAME` in the `.env` file.
+
+To run:
+
+```console
+node sync-metals.js
+```
+
+It is recommended to run this script once per day or week.
