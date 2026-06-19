@@ -16,6 +16,8 @@ This is a collection of useful scripts to help you manage your Actual Budget.
     - [Tracking Investment Accounts](#tracking-investment-accounts)
     - [Tracking Bitcoin Price](#tracking-bitcoin-price)
 
+NOTE: these scripts ignore any account that is closed.
+
 ## Requirements
 
 - [Actual Budget](https://actualbudget.org/)

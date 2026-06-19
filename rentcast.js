@@ -23,6 +23,10 @@ async function getRentCast(URL) {
 
     const accounts = await api.getAccounts();
     for (const account of accounts) {
+      if (account.closed) {
+        continue;
+      }
+
         const note = await getAccountNote(account);
 
         if (note) {
