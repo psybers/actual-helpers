@@ -2,42 +2,42 @@ const { closeBudget, openBudget, getAccountNote, getAccountBalance, getTagValue,
 const api = require('@actual-app/api');
 
 function getValueAtPath(obj, path) {
-    const keys = path.split('.').filter(Boolean);
+  const keys = path.split('.').filter(Boolean);
 
-    return keys.reduce((acc, key) => {
-        const match = key.match(/^([^\[\]]+)(\[(\d+)\])?$/);
+  return keys.reduce((acc, key) => {
+    const match = key.match(/^([^\[\]]+)(\[(\d+)\])?$/);
 
-        if (match) {
-            const property = match[1];
-            const index = match[3];
+    if (match) {
+      const property = match[1];
+      const index = match[3];
 
-            acc = acc[property];
+      acc = acc[property];
 
-            if (index !== undefined) {
-                acc = acc[parseInt(index, 10)];
-            }
-        } else {
-            acc = acc[key];
-        }
+      if (index !== undefined) {
+        acc = acc[parseInt(index, 10)];
+      }
+    } else {
+      acc = acc[key];
+    }
 
-        return acc;
-    }, obj);
+    return acc;
+  }, obj);
 }
 
 async function getMetalPrice(metal) {
-    const defaultUrl = metal === 'GOLD'
-        ? 'https://api.gold-api.com/price/XAU'
-        : 'https://api.gold-api.com/price/XAG';
-    const url = (process.env[`${metal}_PRICE_URL`] || defaultUrl).replace(/^["']|["']$/g, '');
-    const path = (process.env[`${metal}_PRICE_JSON_PATH`] || 'price').replace(/^["']|["']$/g, '');
-    try {
-        const response = await fetch(url);
-        const json = await response.json();
-        return getValueAtPath(json, path);
-    } catch (error) {
-        console.error(`Error fetching ${metal} price:`, error);
-        return undefined;
-    }
+  const defaultUrl = metal === 'GOLD'
+    ? 'https://api.gold-api.com/price/XAU'
+    : 'https://api.gold-api.com/price/XAG';
+  const url = (process.env[`${metal}_PRICE_URL`] || defaultUrl).replace(/^["']|["']$/g, '');
+  const path = (process.env[`${metal}_PRICE_JSON_PATH`] || 'price').replace(/^["']|["']$/g, '');
+  try {
+    const response = await fetch(url);
+    const json = await response.json();
+    return getValueAtPath(json, path);
+  } catch (error) {
+    console.error(`Error fetching ${metal} price:`, error);
+    return undefined;
+  }
 }
 
 (async () => {

@@ -1,10 +1,6 @@
 const api = require('@actual-app/api');
 require("dotenv").config();
 
-function envStr(key, defaultValue = '') {
-    return (process.env[key] || defaultValue).replace(/^["']|["']$/g, '');
-}
-
 const Utils = {
   openBudget: async function () {
     process.on('unhandledRejection', (reason, p) => {
@@ -13,11 +9,11 @@ const Utils = {
       process.exit(1);
     });
 
-    const url = envStr('ACTUAL_SERVER_URL');
-    const password = envStr('ACTUAL_SERVER_PASSWORD');
-    const file_password = envStr('ACTUAL_FILE_PASSWORD');
-    const sync_id = envStr('ACTUAL_SYNC_ID');
-    const cache = envStr('ACTUAL_CACHE_DIR', './cache');
+    const url = process.env.ACTUAL_SERVER_URL || '';
+    const password = process.env.ACTUAL_SERVER_PASSWORD || '';
+    const file_password = process.env.ACTUAL_FILE_PASSWORD || '';
+    const sync_id = process.env.ACTUAL_SYNC_ID || '';
+    const cache = process.env.ACTUAL_CACHE_DIR || './cache';
 
     if (!url || !password || !sync_id) {
       console.error('Required settings for Actual not provided.');
