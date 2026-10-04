@@ -70,11 +70,16 @@ ENV BITCOIN_PRICE_URL="https://api.kraken.com/0/public/Ticker?pair=xbtusd"
 ENV BITCOIN_PRICE_JSON_PATH="result.XXBTZUSD.c[0]"
 ENV BITCOIN_PAYEE_NAME="Bitcoin Price Change"
 
+# optional, for retrieving precious metals prices (these default to gold-api.com USD/troy oz)
+ENV GOLD_PRICE_URL="https://api.gold-api.com/price/XAU"
+ENV GOLD_PRICE_JSON_PATH="price"
+ENV SILVER_PRICE_URL="https://api.gold-api.com/price/XAG"
+ENV SILVER_PRICE_JSON_PATH="price"
+ENV METALS_PAYEE_NAME="Metals Price Change"
+
 #optional, RentCast API key for fetching property data
 ENV RENTCAST_API_KEY=""
 ENV RENTCAST_PAYEE_NAME="RentCast"
-
-VOLUME ./cache
 
 # Copy the current directory contents into the container at /usr/src/app
 COPY --chown=node:node . .

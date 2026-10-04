@@ -22,6 +22,10 @@ async function getRentCast(URL) {
 
         const accounts = await api.getAccounts();
         for (const account of accounts) {
+          if (account.closed) {
+            continue;
+          }
+
             const note = await getAccountNote(account);
 
             if (note) {
@@ -43,9 +47,9 @@ async function getRentCast(URL) {
 
                     let ownership = 1;
                     if (note.indexOf('ownership:') > -1) {
-                    ownership = parseFloat(getTagValue(note, 'ownership'));
+                      ownership = parseFloat(getTagValue(note, 'ownership'));
                     }
-            
+              
                     console.log('Fetching RentCast for account:', account.name);
 
                     const rc = await getRentCast(URL);
