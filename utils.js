@@ -1,18 +1,18 @@
 const api = require('@actual-app/api');
 require("dotenv").config();
 
+process.on('unhandledRejection', (reason, p) => {
+  console.error('Unhandled Rejection at: Promise', p, 'reason:', reason);
+  console.error(reason.stack);
+  process.exit(1);
+});
+
 const Utils = {
   getSyncIds: function () {
     return (process.env.ACTUAL_SYNC_ID || '').split(',').map(id => id.trim()).filter(Boolean);
   },
 
   openBudget: async function (syncId) {
-    process.on('unhandledRejection', (reason, p) => {
-      console.error('Unhandled Rejection at: Promise', p, 'reason:', reason);
-      console.error(reason.stack);
-      process.exit(1);
-    });
-
     const url = process.env.ACTUAL_SERVER_URL || '';
     const password = process.env.ACTUAL_SERVER_PASSWORD || '';
     const file_password = process.env.ACTUAL_FILE_PASSWORD || '';
@@ -42,8 +42,15 @@ const Utils = {
       process.exit(1);
     }
     for (const syncId of syncIds) {
-      await Utils.openBudget(syncId);
-      await callback();
+      console.log('budget:', syncId);
+      // a failure in one budget should not stop the others from running
+      try {
+        await Utils.openBudget(syncId);
+        await callback();
+      } catch (e) {
+        console.error('Failed for budget:', syncId, e);
+        process.exitCode = 1;
+      }
       await Utils.closeBudget();
     }
   },
