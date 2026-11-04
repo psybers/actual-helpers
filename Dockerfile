@@ -81,6 +81,10 @@ ENV METALS_PAYEE_NAME="Metals Price Change"
 ENV RENTCAST_API_KEY=""
 ENV RENTCAST_PAYEE_NAME="RentCast"
 
+# optional, TerraScoutX API key for fetching county property values
+ENV TERRASCOUTX_API_KEY=""
+ENV TERRASCOUTX_PAYEE_NAME="TerraScoutX"
+
 # Copy the current directory contents into the container at /usr/src/app
 COPY --chown=node:node . .
 
