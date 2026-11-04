@@ -1,4 +1,4 @@
-const { closeBudget, openBudget, getTransactions, getAccountNote, getAccountBalance, getTagValue, ensurePayee } = require('./utils');
+const { forEachBudget, getTransactions, getAccountNote, getAccountBalance, getTagValue, ensurePayee } = require('./utils');
 const api = require('@actual-app/api');
 
 function getValueAtPath(obj, path) {
@@ -41,33 +41,33 @@ async function getBitcoinPrice() {
   if (!bitcoinPrice) {
     throw new Error("Unable to retrieve Bitcoin price. Check your BITCOIN_PRICE_URL and BITCOIN_PRICE_JSON_PATH environment variables");
   }
-  await openBudget();
-  const payeeId = await ensurePayee(process.env.BITCOIN_PAYEE_NAME || 'Bitcoin Price Change');
-  const accounts = await api.getAccounts();
-  for (const account of accounts) {
-    if (account.closed) {
-      continue;
+  await forEachBudget(async () => {
+    const payeeId = await ensurePayee(process.env.BITCOIN_PAYEE_NAME || 'Bitcoin Price Change');
+    const accounts = await api.getAccounts();
+    for (const account of accounts) {
+      if (account.closed) {
+        continue;
+      }
+      const cutoffDate = new Date();
+      cutoffDate.setDate(cutoffDate.getDate() + 1);
+      const note = await getAccountNote(account, cutoffDate);
+      const btc_amount = parseFloat(getTagValue(note, 'BTC', 0.0));
+      if (!btc_amount) {
+        continue;
+      }
+      const currentBalance = await getAccountBalance(account);
+      const targetBalance = Math.round(bitcoinPrice * btc_amount * 100);
+      const diff = targetBalance - currentBalance;
+      if (diff != 0) {
+        await api.importTransactions(account.id, [{
+          date: new Date(),
+          payee: payeeId,
+          amount: diff,
+          cleared: true,
+          reconciled: true,
+          notes: "Updated Bitcoin Price",
+        }])
+      }
     }
-    const cutoffDate = new Date();
-    cutoffDate.setDate(cutoffDate.getDate() + 1);
-    const note = await getAccountNote(account, cutoffDate);
-    const btc_amount = parseFloat(getTagValue(note, 'BTC', 0.0));
-    if (!btc_amount) {
-      continue;
-    }
-    const currentBalance = await getAccountBalance(account);
-    const targetBalance = Math.round(bitcoinPrice * btc_amount * 100);
-    const diff = targetBalance - currentBalance;
-    if (diff != 0) {
-      await api.importTransactions(account.id, [{
-        date: new Date(),
-        payee: payeeId,
-        amount: diff,
-        cleared: true,
-        reconciled: true,
-        notes: "Updated Bitcoin Price",
-      }])
-    }
-  }
-  await closeBudget();
+  });
 })();
