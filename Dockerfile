@@ -61,6 +61,8 @@ ENV SIMPLEFIN_CREDENTIALS=""
 
 # optional, name of the payee for Zestimate entries
 ENV ZESTIMATE_PAYEE_NAME="Zestimate"
+# optional, PropertiesAPI key so zestimate.js does not need Chrome
+ENV PROPERTIESAPI_API_KEY=""
 
 # optional, name of the payee for KBB entries
 ENV KBB_PAYEE_NAME="KBB"

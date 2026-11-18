@@ -335,6 +335,24 @@ node zestimate.js
 
 It is recommended to run this script once per month.
 
+#### Without a browser (optional, PropertiesAPI)
+
+Zillow's bot protection can block the browser this script uses.  If
+you set `PROPERTIESAPI_API_KEY` in the `.env` file, the script instead reads
+the Zestimate shown on the same Zillow page from the
+[PropertiesAPI](https://propertiesapi.com) JSON API, so it needs no Chrome or
+chromedriver.  The account notes stay the same (`zestimate:<Zillow URL>`).
+
+PropertiesAPI is an independent paid service, not affiliated with Zillow.  New
+accounts get 50 free lookups; after that each lookup is charged to your
+PropertiesAPI account.  The script uses one lookup per tagged account each time
+it runs, and a repeat lookup of the same home within 24 hours is free.
+
+When Zillow shows no Zestimate for a home, the script skips that account rather
+than using the listing price.  An invalid key, no remaining lookups or a rate
+limit stops the run with an error.  Leave `PROPERTIESAPI_API_KEY` unset to keep
+using the browser.
+
 ### Tracking Vehicle Prices (Kelley Blue Book)
 
 **Note: this script requires having a starting balance in the account**
